@@ -1,12 +1,17 @@
 import React from 'react';
-import {hot} from "react-hot-loader";
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { hot } from 'react-hot-loader';
 
-const App = () => {
-  return (
-    <div className="App">
-      <h1> Hello, World! </h1>
-    </div>
-  );
-};
+// Containers
+import HomePage from './containers/homePage/HomePage';
+
+const App = () => (
+  <div className="App">
+    <h1> Hello, World! </h1>
+    <Router>
+      <Route exact path="/" container={HomePage} />
+    </Router>
+  </div>
+);
 
 export default hot(module)(App);
