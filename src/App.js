@@ -7,9 +7,9 @@ import HomePage from './containers/homePage/HomePage';
 
 const App = () => (
   <div className="App">
-    <h1> Hello, World! </h1>
     <Router>
-      <Route exact path="/" container={HomePage} />
+      <Route exact path="/" component={HomePage} />
+      <Route path="/recipes" component={HomePage} />
     </Router>
   </div>
 );
