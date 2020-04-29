@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 
 // Components
 import Button from '../../components/button/Button';
-import Field from '../../components/field/Field';
+import TextField from '../../components/textField/TextField';
 
 // Services
 import { fetchData } from '../services/requestService';
 
-const Recipe = ({ match }) => {
+const EditRecipe = ({ match }) => {
   const [recipe, setRecipe] = useState({});
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const Recipe = ({ match }) => {
     getRecipeData();
   }, []);
 
-  const handleFieldChange = ({ target }) => {
+  const handleTextFieldChange = ({ target }) => {
     const { name, value } = target;
 
     setRecipe({
@@ -34,28 +34,42 @@ const Recipe = ({ match }) => {
   return (
     <>
       <Button type="link" url="/recipes">Go back</Button>
-      <Field
-        tag="h1"
+      <h1>Recipe</h1>
+      <TextField
+        labelText="Title"
         value={recipe && recipe.title}
+        id="title"
+        onChange={handleTextFieldChange}
       />
-      <Field
+      <TextField
+        labelText="Description"
         value={recipe && recipe.description}
+        id="description"
+        onChange={handleTextFieldChange}
       />
-      <Field
+      <TextField
+        labelText="Recipe"
         value={recipe && recipe.recipe}
-        label="Description:"
+        id="recipe"
+        onChange={handleTextFieldChange}
       />
-      <Field
+      <TextField
+        labelText="Photo"
         value={recipe && recipe.photo}
+        id="photo"
+        onChange={handleTextFieldChange}
       />
-      <Field
+      <TextField
+        labelText="Category"
         value={recipe && recipe.category && recipe.category.name}
+        id="category.name"
+        onChange={handleTextFieldChange}
       />
     </>
   );
 };
 
-Recipe.propTypes = {
+EditRecipe.propTypes = {
   match: PropTypes.shape({
     isExact: PropTypes.bool,
     params: PropTypes.shape({
@@ -66,4 +80,4 @@ Recipe.propTypes = {
   }).isRequired,
 };
 
-export default Recipe;
+export default EditRecipe;

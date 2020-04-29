@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { hot } from 'react-hot-loader';
 
 // Containers
+import EditRecipe from './containers/editRecipe/EditRecipe';
 import Footer from './containers/footer/Footer';
 import Header from './containers/header/Header';
 import HomePage from './containers/homePage/HomePage';
@@ -16,7 +17,7 @@ const App = () => (
       <Route exact path="/" component={HomePage} />
       <Route path="/recipes" component={RecipesList} />
       <Route path="/recipe/:slug" component={Recipe} />
-      <Route path="/create_recipe" component={Recipe} />
+      <Route path="/create_recipe" component={EditRecipe} />
       <Footer />
     </Router>
   </div>

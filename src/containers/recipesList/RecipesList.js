@@ -25,8 +25,6 @@ const RecipesList = () => {
         <div key={recipe.slug}>
           <div>{recipe.title}</div>
           <div>{recipe.description}</div>
-          <div>{recipe.recipe}</div>
-          <div>{recipe.photo}</div>
           <div>{recipe.category.name}</div>
           <Button type="link" url={`/recipe/${recipe.slug}`}>Show recipe</Button>
         </div>
