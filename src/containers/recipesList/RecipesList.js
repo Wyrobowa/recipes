@@ -28,7 +28,7 @@ const RecipesList = () => {
           <div>{recipe.recipe}</div>
           <div>{recipe.photo}</div>
           <div>{recipe.category.name}</div>
-          <Button type="link" url={`/recipe/${recipe.slug}`}>Click me</Button>
+          <Button type="link" url={`/recipe/${recipe.slug}`}>Show recipe</Button>
         </div>
       ))}
     </>

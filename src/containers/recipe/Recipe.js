@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
+// Components
+import Button from '../../components/button/Button';
+import TextField from '../../components/textField/TextField';
+
 // Services
 import { fetchData } from '../services/requestService';
 
@@ -18,14 +22,49 @@ const Recipe = ({ match }) => {
     getRecipeData();
   }, []);
 
+  const handleTextFieldChange = ({ target }) => {
+    const { name, value } = target;
+
+    setRecipe({
+      ...recipe,
+      [name]: value,
+    });
+  };
+
   return (
     <>
+      <Button type="link" url="/recipes">Go back</Button>
       <h1>Recipe</h1>
-      <div>{recipe.title}</div>
-      <div>{recipe.description}</div>
-      <div>{recipe.recipe}</div>
-      <div>{recipe.photo}</div>
-      <div>{recipe.category && recipe.category.name}</div>
+      <TextField
+        labelText="Title"
+        value={recipe.title}
+        id="title"
+        onChange={handleTextFieldChange}
+      />
+      <TextField
+        labelText="Description"
+        value={recipe.description}
+        id="description"
+        onChange={handleTextFieldChange}
+      />
+      <TextField
+        labelText="Recipe"
+        value={recipe.recipe}
+        id="recipe"
+        onChange={handleTextFieldChange}
+      />
+      <TextField
+        labelText="Photo"
+        value={recipe.photo}
+        id="photo"
+        onChange={handleTextFieldChange}
+      />
+      <TextField
+        labelText="Category"
+        value={recipe.category && recipe.category.name}
+        id="category.name"
+        onChange={handleTextFieldChange}
+      />
     </>
   );
 };
