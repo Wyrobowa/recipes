@@ -13,11 +13,12 @@ const Field = ({ tag: Tag, value, label }) => (
 Field.propTypes = {
   tag: PropTypes.oneOf(['h1', 'span']),
   value: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
 };
 
 Field.defaultProps = {
   tag: 'span',
+  label: null,
 };
 
 export default Field;

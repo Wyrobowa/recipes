@@ -13,7 +13,7 @@ import Recipe from './containers/recipe/Recipe';
 const App = () => (
   <div className="App">
     <Router>
-      <Header />
+      <Header appName="Moje przepisy" />
       <Route exact path="/" component={HomePage} />
       <Route path="/recipes" component={RecipesList} />
       <Route path="/recipe/:slug" component={Recipe} />

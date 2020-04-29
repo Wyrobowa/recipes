@@ -1,38 +1,25 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 const Button = ({
-  type, children, onClick, url,
+  type, onClick, children,
 }) => (
-  <>
-    {type === 'button' && (
-      <Button
-        onClick={onClick}
-        type="button"
-      >
-        {children}
-      </Button>
-    )}
-    {type === 'link' && (
-      <Link to={url}>
-        {children}
-      </Link>
-    )}
-  </>
+  <button
+    type={type}
+    onClick={onClick}
+  >
+    {children}
+  </button>
 );
 
 Button.propTypes = {
-  type: PropTypes.oneOf(['button', 'link']),
+  type: PropTypes.oneOf(['button', 'submit']),
   children: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
-  onClick: PropTypes.func,
-  url: PropTypes.string,
+  onClick: PropTypes.func.isRequired,
 };
 
 Button.defaultProps = {
   type: 'button',
-  onClick: () => {},
-  url: '',
 };
 
 export default Button;

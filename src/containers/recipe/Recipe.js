@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 // Components
-import Button from '../../components/button/Button';
 import Field from '../../components/field/Field';
 
 // Services
-import { fetchData } from '../services/requestService';
+import { fetchData } from '../../services/requestService';
+import Hyperlink from '../../components/hyperlink/Hyperlink';
 
 const Recipe = ({ match }) => {
   const [recipe, setRecipe] = useState({});
@@ -22,35 +22,14 @@ const Recipe = ({ match }) => {
     getRecipeData();
   }, []);
 
-  const handleFieldChange = ({ target }) => {
-    const { name, value } = target;
-
-    setRecipe({
-      ...recipe,
-      [name]: value,
-    });
-  };
-
   return (
     <>
-      <Button type="link" url="/recipes">Go back</Button>
-      <Field
-        tag="h1"
-        value={recipe && recipe.title}
-      />
-      <Field
-        value={recipe && recipe.description}
-      />
-      <Field
-        value={recipe && recipe.recipe}
-        label="Description:"
-      />
-      <Field
-        value={recipe && recipe.photo}
-      />
-      <Field
-        value={recipe && recipe.category && recipe.category.name}
-      />
+      <Hyperlink url="/recipes" name="Go back" />
+      <Field tag="h1" value={recipe.title || ''} />
+      <Field value={recipe.description || ''} />
+      <Field value={recipe.recipe || ''} label="Description:" />
+      <Field value={recipe.photo || ''} />
+      <Field value={recipe.category ? recipe.category.name : ''} />
     </>
   );
 };

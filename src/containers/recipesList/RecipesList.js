@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
 // Components
-import Button from '../../components/button/Button';
+import Hyperlink from '../../components/hyperlink/Hyperlink';
 
 // Services
-import { fetchData } from '../services/requestService';
+import { fetchData } from '../../services/requestService';
 
 const RecipesList = () => {
   const [recipesList, setRecipesList] = useState([]);
@@ -26,7 +26,7 @@ const RecipesList = () => {
           <div>{recipe.title}</div>
           <div>{recipe.description}</div>
           <div>{recipe.category.name}</div>
-          <Button type="link" url={`/recipe/${recipe.slug}`}>Show recipe</Button>
+          <Hyperlink url={`/recipe/${recipe.slug}`} name="Show recipe" />
         </div>
       ))}
     </>
