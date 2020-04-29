@@ -37,31 +37,31 @@ const Recipe = ({ match }) => {
       <h1>Recipe</h1>
       <TextField
         labelText="Title"
-        value={recipe.title}
+        value={recipe && recipe.title}
         id="title"
         onChange={handleTextFieldChange}
       />
       <TextField
         labelText="Description"
-        value={recipe.description}
+        value={recipe && recipe.description}
         id="description"
         onChange={handleTextFieldChange}
       />
       <TextField
         labelText="Recipe"
-        value={recipe.recipe}
+        value={recipe && recipe.recipe}
         id="recipe"
         onChange={handleTextFieldChange}
       />
       <TextField
         labelText="Photo"
-        value={recipe.photo}
+        value={recipe && recipe.photo}
         id="photo"
         onChange={handleTextFieldChange}
       />
       <TextField
         labelText="Category"
-        value={recipe.category && recipe.category.name}
+        value={recipe && recipe.category && recipe.category.name}
         id="category.name"
         onChange={handleTextFieldChange}
       />
