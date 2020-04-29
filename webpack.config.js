@@ -2,11 +2,8 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const srcPath = path.join(__dirname, './src');
-const distPath = path.join(__dirname, './dist');
-
 module.exports = {
-  entry: './src/index.js',
+  entry: ['@babel/polyfill', './src/index.js'],
   module: {
     rules: [
       {
@@ -31,6 +28,7 @@ module.exports = {
     historyApiFallback: true,
     compress: true,
     port: 9000,
+    hot: true,
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),

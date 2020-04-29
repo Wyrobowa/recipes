@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from 'react';
 
+// Services
+import { fetchData } from '../services/requestService';
+
 const RecipesList = () => {
   const [recipesList, setRecipesList] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:3000/recipes')
-      .then((res) => res.json())
-      .then((json) => setRecipesList(json.data));
+    const getRecipesListData = async () => {
+      const response = await fetchData('http://localhost:3000/recipes');
+      setRecipesList(response);
+    };
+
+    getRecipesListData();
   }, []);
 
   return (
     <>
       <h1>Recipes List</h1>
       {recipesList.length && recipesList.map((recipe) => (
-        <div>
+        <div key={recipe.slug}>
           <div>{recipe.title}</div>
           <div>{recipe.description}</div>
           <div>{recipe.recipe}</div>
