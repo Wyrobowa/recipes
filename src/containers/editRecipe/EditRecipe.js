@@ -20,9 +20,9 @@ const initState = {
 const EditRecipe = ({ match }) => {
   const [recipe, setRecipe] = useState({});
 
-  useEffect(() => {
-    const { slug } = match.params;
+  const { slug } = match.params || null;
 
+  useEffect(() => {
     const getRecipeData = async () => {
       const response = await fetchData(`http://localhost:3000/recipe/${slug}`);
       setRecipe(response);
@@ -34,32 +34,22 @@ const EditRecipe = ({ match }) => {
   const handleTextFieldChange = ({ target }) => {
     const { name, value } = target;
 
-    console.log(recipe)
-    console.log(name)
-    console.log(value)
-
     setRecipe({
       ...recipe,
       [name]: value,
     });
-
-    if (name === 'category') {
-      setRecipe({
-        ...recipe,
-        category: {
-          ...recipe.category,
-          name: value,
-        },
-      });
-    }
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    await sendData('http://localhost:3000/recipe/add', 'POST', recipe);
+    if (slug) {
+      await sendData(`http://localhost:3000/recipe/edit/${slug}`, 'PUT', recipe);
+    } else {
+      await sendData('http://localhost:3000/recipe/add', 'POST', recipe);
+      setRecipe(initState);
+    }
 
-    setRecipe(initState);
   };
 
   return (

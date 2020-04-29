@@ -11,9 +11,9 @@ import Hyperlink from '../../components/hyperlink/Hyperlink';
 const Recipe = ({ match }) => {
   const [recipe, setRecipe] = useState({});
 
-  useEffect(() => {
-    const { slug } = match.params;
+  const { slug } = match.params;
 
+  useEffect(() => {
     const getRecipeData = async () => {
       const response = await fetchData(`http://localhost:3000/recipe/${slug}`);
       setRecipe(response);
@@ -25,6 +25,7 @@ const Recipe = ({ match }) => {
   return (
     <>
       <Hyperlink url="/recipes" name="Go back" />
+      <Hyperlink url={`/edit_recipe/${slug}`} name="Edit recipe" />
       <Field tag="h1" value={recipe.title || ''} />
       <Field value={recipe.description || ''} />
       <Field value={recipe.recipe || ''} label="Description:" />

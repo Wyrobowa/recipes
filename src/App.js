@@ -18,6 +18,7 @@ const App = () => (
       <Route path="/recipes" component={RecipesList} />
       <Route path="/recipe/:slug" component={Recipe} />
       <Route path="/create_recipe" component={EditRecipe} />
+      <Route path="/edit_recipe/:slug" component={EditRecipe} />
       <Footer />
     </Router>
   </div>
