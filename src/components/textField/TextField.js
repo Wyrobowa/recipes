@@ -1,15 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+// Styles
+import * as Styled from './textFieldStyles';
+
 const TextField = ({
   fieldType, labelText, id, value, onChange,
 }) => (
-  <div>
+  <Styled.TextField>
     {labelText && (
-      <label htmlFor={id}>{labelText}</label>
+      <Styled.Label htmlFor={id}>{labelText}</Styled.Label>
     )}
     {fieldType === 'input' && (
-      <input
+      <Styled.Input
         id={id}
         name={id}
         value={value || ''}
@@ -24,7 +27,7 @@ const TextField = ({
         value={value || ''}
       />
     )}
-  </div>
+  </Styled.TextField>
 );
 
 TextField.propTypes = {

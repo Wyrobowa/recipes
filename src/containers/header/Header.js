@@ -4,11 +4,14 @@ import PropTypes from 'prop-types';
 // Components
 import Menu from '../../components/menu/Menu';
 
+// Styles
+import * as Styled from './headerStyles';
+
 const Header = ({ appName }) => (
-  <header>
-    <h1>{appName}</h1>
+  <Styled.Header>
+    <Styled.Title>{appName}</Styled.Title>
     <Menu />
-  </header>
+  </Styled.Header>
 );
 
 Header.propTypes = {

@@ -1,9 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
+// Styles
+import * as Styled from './menuItemStyles';
+
 const MenuItem = ({ name, url }) => (
-  <Link to={url}>{name}</Link>
+  <Styled.MenuItem>
+    <Styled.MenuLink to={url}>{name}</Styled.MenuLink>
+  </Styled.MenuItem>
 );
 
 MenuItem.propTypes = {

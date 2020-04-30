@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 // Components
+import Button from '../../components/button/Button';
+import ButtonsMenu from '../../components/buttonsMenu/ButtonsMenu';
 import Hyperlink from '../../components/hyperlink/Hyperlink';
 import TextField from '../../components/textField/TextField';
 
 // Services
 import { fetchData, sendData } from '../../services/requestService';
-import Button from '../../components/button/Button';
 
 const initState = {
   title: '',
@@ -49,12 +50,13 @@ const EditRecipe = ({ match }) => {
       await sendData('http://localhost:3000/recipe/add', 'POST', recipe);
       setRecipe(initState);
     }
-
   };
 
   return (
     <>
-      <Hyperlink url="/recipes" name="Go back" />
+      <ButtonsMenu>
+        <Hyperlink url="/recipes" name="Go back" />
+      </ButtonsMenu>
       <h1>Recipe</h1>
       <TextField
         labelText="Title"
@@ -86,7 +88,7 @@ const EditRecipe = ({ match }) => {
         id="category"
         onChange={handleTextFieldChange}
       />
-      <Button type="submit" onClick={handleSubmit}>Submit</Button>
+      <Button type="submit" model="success" onClick={handleSubmit}>Submit</Button>
     </>
   );
 };

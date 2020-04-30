@@ -1,9 +1,12 @@
 import React from 'react';
 
+// Styles
+import * as Styled from './footerStyles';
+
 const Footer = () => (
-  <footer>
+  <Styled.Footer>
     <p>2020</p>
-  </footer>
+  </Styled.Footer>
 );
 
 export default Footer;

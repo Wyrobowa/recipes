@@ -1,13 +1,15 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+
+// Styles
+import * as Styled from './hyperlinkStyles';
 
 const Hyperlink = ({
   url, name,
 }) => (
-  <Link to={url}>
+  <Styled.Hyperlink to={url}>
     {name}
-  </Link>
+  </Styled.Hyperlink>
 );
 
 Hyperlink.propTypes = {

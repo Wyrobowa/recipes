@@ -1,13 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+// Styles
+import * as Styled from './fieldStyles';
+
 const Field = ({ tag: Tag, value, label }) => (
-  <div>
+  <Styled.Field>
     {label && (
       <label htmlFor={value}>{label}</label>
     )}
     <Tag id={value}>{value}</Tag>
-  </div>
+  </Styled.Field>
 );
 
 Field.propTypes = {

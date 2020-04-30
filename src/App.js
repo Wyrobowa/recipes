@@ -10,18 +10,23 @@ import HomePage from './containers/homePage/HomePage';
 import RecipesList from './containers/recipesList/RecipesList';
 import Recipe from './containers/recipe/Recipe';
 
+// Styles
+import * as Styled from './appStyles';
+
 const App = () => (
-  <div className="App">
+  <Styled.App>
     <Router>
-      <Header appName="Moje przepisy" />
-      <Route exact path="/" component={HomePage} />
-      <Route path="/recipes" component={RecipesList} />
-      <Route path="/recipe/:slug" component={Recipe} />
-      <Route path="/create_recipe" component={EditRecipe} />
-      <Route path="/edit_recipe/:slug" component={EditRecipe} />
+      <Styled.Content>
+        <Header appName="Moje przepisy" />
+        <Route exact path="/" component={HomePage} />
+        <Route path="/recipes" component={RecipesList} />
+        <Route path="/recipe/:slug" component={Recipe} />
+        <Route path="/create_recipe" component={EditRecipe} />
+        <Route path="/edit_recipe/:slug" component={EditRecipe} />
+      </Styled.Content>
       <Footer />
     </Router>
-  </div>
+  </Styled.App>
 );
 
 export default hot(module)(App);
