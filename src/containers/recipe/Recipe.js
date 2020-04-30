@@ -11,6 +11,7 @@ import { fetchData } from '../../services/requestService';
 
 // Styles
 import * as Styled from './recipeStyles';
+import ImageField from '../../components/imageField/ImageField';
 
 const Recipe = ({ match }) => {
   const [recipe, setRecipe] = useState({});
@@ -35,7 +36,7 @@ const Recipe = ({ match }) => {
       <Field tag="h1" value={recipe.title || ''} />
       <Field value={recipe.description || ''} />
       <Field value={recipe.recipe || ''} label="Description:" />
-      <Field value={recipe.photo || ''} />
+      <ImageField src={recipe.photo || ''} name={recipe.title} size="small" />
       <Field value={recipe.category ? recipe.category.name : ''} />
     </Styled.Recipe>
   );

@@ -27,14 +27,16 @@ const RecipesList = () => {
       <Field tag="h1" value="Recipes List" />
       <Styled.RecipesList>
         {recipesList.length && recipesList.map((recipe) => (
-          <Styled.Recipe key={recipe.slug}>
-            <Styled.Title>{recipe.title}</Styled.Title>
-            <div>{recipe.description}</div>
-            <Styled.RecipeFooter>
-              <div>{`Category: ${recipe.category.name}`}</div>
-              <Hyperlink url={`/recipe/${recipe.slug}`} name="Show recipe" />
-            </Styled.RecipeFooter>
-          </Styled.Recipe>
+          <Styled.RecipeWrapper>
+            <Styled.Recipe key={recipe.slug}>
+              <Styled.Title>{recipe.title}</Styled.Title>
+              <div>{recipe.description}</div>
+              <Styled.RecipeFooter>
+                <div>{`Category: ${recipe.category.name}`}</div>
+                <Hyperlink url={`/recipe/${recipe.slug}`} name="Show recipe" />
+              </Styled.RecipeFooter>
+            </Styled.Recipe>
+          </Styled.RecipeWrapper>
         ))}
       </Styled.RecipesList>
     </>
