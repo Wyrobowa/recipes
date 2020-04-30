@@ -5,33 +5,39 @@ const RecipesList = styled.div`
 `;
 
 const RecipeWrapper = styled.div`
+  flex: 1 1 0;
   margin: .5em;
-  background: url("http://localhost:3000/img/bread.jpeg") no-repeat fixed center;
+  ${({ imgUrl }) => imgUrl && `
+    background-image: url("${imgUrl}");
+  `};
+  background-size: cover;
+  background-position: center;
 `;
 
 const Recipe = styled.div`
   padding: 1em;
   margin: .5em;
-  border: 1px solid hsl(0, 0%, 90%);
-  background-color: rgba(255, 255, 255, 0.5);
+  border: 1px solid ${({ theme }) => theme.colors.grey20};
+  background-color: rgba(255, 255, 255, 0.7);
   
   &:hover {
-    background-color: rgba(255, 255, 255, 0.75);
+    background-color: rgba(255, 255, 255, 0.8);
   }
 `;
 
 const Item = styled.div`
-  
+  margin-bottom: .5em;
 `;
 
 const Title = styled(Item)`
-  font-size: 1.5em;
+  font-size: 2em;
   text-align: center;
 `;
 
 const RecipeFooter = styled.div`
   display: flex;
   justify-content: space-between;
+  padding-top: 1em;
 `;
 
 export {

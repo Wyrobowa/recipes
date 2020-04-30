@@ -4,9 +4,9 @@ const Button = styled.button`
   display: inline-block;
   text-align: center;
   padding: .5em 1em;
-  color: #fff;
+  color: ${({ theme }) => theme.colors.buttonFont};
   font-size: 1em;
-  border-radius: .25em;
+  border-radius: ${({ theme }) => theme.main.borderRadius};
   
   ${({ model }) => model === 'success' && `
     background-color: #17a2b8;

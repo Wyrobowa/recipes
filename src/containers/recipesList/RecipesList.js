@@ -27,7 +27,7 @@ const RecipesList = () => {
       <Field tag="h1" value="Recipes List" />
       <Styled.RecipesList>
         {recipesList.length && recipesList.map((recipe) => (
-          <Styled.RecipeWrapper>
+          <Styled.RecipeWrapper imgUrl={recipe.photo || ''} key={recipe.slug}>
             <Styled.Recipe key={recipe.slug}>
               <Styled.Title>{recipe.title}</Styled.Title>
               <div>{recipe.description}</div>

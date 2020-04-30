@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Components
-import Menu from '../../components/menu/Menu';
+import Menu from '../menu/Menu';
 
 // Styles
 import * as Styled from './headerStyles';

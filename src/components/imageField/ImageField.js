@@ -15,7 +15,7 @@ ImageField.propTypes = {
 };
 
 ImageField.defaultProps = {
-  src: 'http://localhost:3000/img/bread.jpeg',
+  src: 'http://localhost:3000/img/default.jpg',
   size: 'small',
 };
 

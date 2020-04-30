@@ -15,8 +15,8 @@ const Input = styled.input`
   height: 1.5em;
   padding: .5em;
   font-size: 1em;
-  border: 1px solid hsl(0, 0%, 90%);
-  border-radius: .25em;
+  border: 1px solid ${({ theme }) => theme.colors.grey20};
+  border-radius: ${({ theme }) => theme.main.borderRadius};
 `;
 
 export {

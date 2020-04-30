@@ -3,7 +3,8 @@ import styled from 'styled-components';
 const Header = styled.header`
   display: flex;
   justify-content: space-between;
-  padding: .5em 0;
+  align-items: center;
+  height: 4em;
   background-color: hsl(0, 0%, 95%);
 `;
 
