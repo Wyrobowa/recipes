@@ -8,7 +8,7 @@ const Footer = () => (
     <Styled.FooterItem>2020</Styled.FooterItem>
     <Styled.FooterItem>
       Designed by
-      <Styled.FooterLink url="https://www.google.com" name="Ania" />
+      <Styled.FooterLink url="https://www.google.com">Ania</Styled.FooterLink>
     </Styled.FooterItem>
   </Styled.Footer>
 );

@@ -24,13 +24,13 @@ Field.propTypes = {
   tag: PropTypes.oneOf(['h1', 'span']),
   value: PropTypes.string.isRequired,
   label: PropTypes.string,
-  title: PropTypes.bool,
+  title: PropTypes.oneOf(['main', 'other']),
 };
 
 Field.defaultProps = {
   tag: 'span',
   label: null,
-  title: false,
+  title: 'other',
 };
 
 export default Field;

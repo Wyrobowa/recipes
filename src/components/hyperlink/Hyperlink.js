@@ -5,16 +5,19 @@ import PropTypes from 'prop-types';
 import * as Styled from './hyperlinkStyles';
 
 const Hyperlink = ({
-  url, name,
+  url, children,
 }) => (
   <Styled.Hyperlink to={url}>
-    {name}
+    {children}
   </Styled.Hyperlink>
 );
 
 Hyperlink.propTypes = {
   url: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.node,
+  ]).isRequired,
 };
 
 export default Hyperlink;

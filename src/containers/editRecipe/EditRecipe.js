@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import Button from '../../components/button/Button';
 import ButtonsMenu from '../../components/buttonsMenu/ButtonsMenu';
 import Hyperlink from '../../components/hyperlink/Hyperlink';
+import Icon from '../../components/icon/Icon';
 import TextField from '../../components/textField/TextField';
 
 // Services
@@ -55,7 +56,10 @@ const EditRecipe = ({ match }) => {
   return (
     <>
       <ButtonsMenu>
-        <Hyperlink url="/recipes" name="Go back" />
+        <Hyperlink url="/">
+          <Icon className="arrow-left" />
+          Go back
+        </Hyperlink>
       </ButtonsMenu>
       <h1>Recipe</h1>
       <TextField

@@ -5,8 +5,9 @@ import PropTypes from 'prop-types';
 import Banner from '../../components/banner/Banner';
 import ButtonsMenu from '../../components/buttonsMenu/ButtonsMenu';
 import Field from '../../components/field/Field';
-
 import Hyperlink from '../../components/hyperlink/Hyperlink';
+import Icon from '../../components/icon/Icon';
+
 // Services
 
 import { fetchData } from '../../services/requestService';
@@ -30,14 +31,20 @@ const Recipe = ({ match }) => {
   return (
     <>
       <ButtonsMenu>
-        <Hyperlink url="/recipes" name="Go back" />
-        <Hyperlink url={`/edit_recipe/${slug}`} name="Edit recipe" />
+        <Hyperlink url="/">
+          <Icon className="arrow-left" />
+          Go back
+        </Hyperlink>
+        <Hyperlink url={`/edit_recipe/${slug}`}>
+          <Icon className="pen" />
+          Edit recipe
+        </Hyperlink>
       </ButtonsMenu>
       <Styled.Recipe>
         <Styled.RecipeHeader>
           <Banner imgUrl={recipe.photo || ''} />
           <Styled.RecipeHeaderWrapper>
-            <Field tag="h1" value={recipe.title || ''} title />
+            <Field tag="h1" value={recipe.title || ''} title="main" />
             <Field value={recipe.category ? recipe.category.name : ''} />
           </Styled.RecipeHeaderWrapper>
         </Styled.RecipeHeader>

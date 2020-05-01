@@ -8,9 +8,8 @@ import * as Styled from './menuStyles';
 
 const Menu = () => (
   <Styled.Menu>
-    <MenuItem name="Home" url="/" />
-    <MenuItem name="Recipes list" url="/recipes" />
-    <MenuItem name="Add new recipe" url="/create_recipe" />
+    <MenuItem name="Recipes list" url="/" icon="list" />
+    <MenuItem name="Add new recipe" url="/create_recipe" icon="plus" />
   </Styled.Menu>
 );
 
