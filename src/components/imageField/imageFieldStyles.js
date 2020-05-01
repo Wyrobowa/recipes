@@ -18,9 +18,14 @@ const Image = styled.img`
     height: 300px;
   `};
   
+  ${({ size }) => size === 'banner' && `
+    width: 100%;
+    height: 300px;
+  `};
+  
   ${({ size }) => size === 'background' && `
     width: 100%;
-    height: 100%  ;
+    height: auto;
   `};
 `;
 

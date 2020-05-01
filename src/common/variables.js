@@ -13,6 +13,7 @@ const variables = {
   },
   fonts: {
     primary: "'open_sans', sans-serif",
+    secondary: "'Butler', serif",
   },
   main: {
     fontSize: '15px',
