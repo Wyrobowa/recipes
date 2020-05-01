@@ -2,21 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Styles
-import * as Styled from './imageFieldStyles';
+import * as Styled from './iconStyles';
 
-const ImageField = ({ name, src, size }) => (
-  <Styled.Image src={src} alt={name} size={size} />
+const Icon = ({ className }) => (
+  <Styled.Icon className={`fas fa-${className}`} />
 );
 
-ImageField.propTypes = {
-  name: PropTypes.string.isRequired,
-  src: PropTypes.string,
-  size: PropTypes.oneOf(['small', 'medium', 'large', 'background']),
+Icon.propTypes = {
+  className: PropTypes.string.isRequired,
 };
 
-ImageField.defaultProps = {
-  src: 'http://localhost:3000/img/default.jpg',
-  size: 'small',
-};
-
-export default ImageField;
+export default Icon;
