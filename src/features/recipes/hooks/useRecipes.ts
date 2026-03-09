@@ -36,7 +36,7 @@ const validateRecipePayload = (input: RecipePayload): string | null => {
       !Number.isInteger(product.productId) ||
       product.productId <= 0 ||
       !Number.isFinite(product.quantity) ||
-      product.quantity <= 0,
+      product.quantity <= 0
   );
 
   if (hasInvalidProduct) {

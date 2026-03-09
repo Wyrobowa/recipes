@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { FormEventHandler } from 'react';
-import { Box, Button, Input, Loader, Notification, Text } from 'tharaday';
+import { Box, Button, Loader, Notification, Text } from 'tharaday';
 import { fetchCategories } from '../../categories/index.ts';
 import type { Category } from '../../categories/types.ts';
 import { fetchProducts } from '../../products/index.ts';
@@ -12,6 +12,7 @@ import {
   toRecipePayload,
   type RecipeFormValues,
 } from '../helpers/recipeFormHelpers.ts';
+import RecipeFormFields from './RecipeFormFields.tsx';
 import RecipeListItem from './RecipeListItem.tsx';
 import { useRecipes } from '../hooks/useRecipes.ts';
 import type { Recipe } from '../types.ts';
@@ -36,11 +37,11 @@ const RecipesList = () => {
   const [optionsError, setOptionsError] = useState<string | null>(null);
 
   const [newRecipeValues, setNewRecipeValues] = useState<RecipeFormValues>(
-    createEmptyRecipeFormValues(),
+    createEmptyRecipeFormValues()
   );
   const [editingRecipeId, setEditingRecipeId] = useState<string | null>(null);
   const [editingRecipeValues, setEditingRecipeValues] = useState<RecipeFormValues>(
-    createEmptyRecipeFormValues(),
+    createEmptyRecipeFormValues()
   );
 
   useEffect(() => {
@@ -78,7 +79,7 @@ const RecipesList = () => {
       } catch (err) {
         if (!cancelled) {
           setOptionsError(
-            err instanceof Error ? err.message : 'Failed to load categories or products',
+            err instanceof Error ? err.message : 'Failed to load categories or products'
           );
         }
       } finally {
@@ -97,14 +98,14 @@ const RecipesList = () => {
 
   const updateNewRecipeField = (
     field: Exclude<keyof RecipeFormValues, 'ingredients'>,
-    value: string,
+    value: string
   ) => {
     setNewRecipeValues((current) => ({ ...current, [field]: value }));
   };
 
   const updateEditingField = (
     field: Exclude<keyof RecipeFormValues, 'ingredients'>,
-    value: string,
+    value: string
   ) => {
     setEditingRecipeValues((current) => ({ ...current, [field]: value }));
   };
@@ -113,11 +114,11 @@ const RecipesList = () => {
     values: RecipeFormValues,
     index: number,
     field: 'productId' | 'quantity',
-    value: string,
+    value: string
   ): RecipeFormValues => ({
     ...values,
     ingredients: values.ingredients.map((ingredient, ingredientIndex) =>
-      ingredientIndex === index ? { ...ingredient, [field]: value } : ingredient,
+      ingredientIndex === index ? { ...ingredient, [field]: value } : ingredient
     ),
   });
 
@@ -128,7 +129,7 @@ const RecipesList = () => {
   const updateEditingIngredient = (
     index: number,
     field: 'productId' | 'quantity',
-    value: string,
+    value: string
   ) => {
     setEditingRecipeValues((current) => updateIngredient(current, index, field, value));
   };
@@ -241,101 +242,19 @@ const RecipesList = () => {
   return (
     <Box display="grid" gap={3}>
       <Box as="form" onSubmit={handleCreate} display="grid" gap={2}>
-        <Input
-          id="new-recipe-title"
-          label="Title"
-          placeholder="e.g. Omelette"
-          value={newRecipeValues.title}
-          onChange={(event) => updateNewRecipeField('title', event.target.value)}
-          error={Boolean(actionError)}
-          helperText={actionError ?? undefined}
-          fullWidth
-        />
-        <Input
-          id="new-recipe-description"
-          label="Description"
-          placeholder="Short summary"
-          value={newRecipeValues.description}
-          onChange={(event) => updateNewRecipeField('description', event.target.value)}
-          fullWidth
-        />
-        <Input
-          id="new-recipe-text"
-          label="Instructions"
-          placeholder="Recipe instructions"
-          value={newRecipeValues.recipe}
-          onChange={(event) => updateNewRecipeField('recipe', event.target.value)}
-          fullWidth
-        />
-        <Input
-          id="new-recipe-photo"
-          label="Photo URL"
-          placeholder="https://..."
-          value={newRecipeValues.photo}
-          onChange={(event) => updateNewRecipeField('photo', event.target.value)}
-          fullWidth
+        <RecipeFormFields
+          prefix="new-recipe"
+          values={newRecipeValues}
+          categories={categories}
+          products={products}
+          titleError={actionError ?? undefined}
+          onFieldChange={updateNewRecipeField}
+          onIngredientChange={updateNewIngredient}
+          onAddIngredient={() => addIngredient('new')}
+          onRemoveIngredient={(index) => removeIngredient('new', index)}
         />
 
-        <label htmlFor="new-recipe-category">
-          <Text as="span" variant="body-sm">
-            Category
-          </Text>
-        </label>
-        <select
-          id="new-recipe-category"
-          value={newRecipeValues.categoryId}
-          onChange={(event) => updateNewRecipeField('categoryId', event.target.value)}
-        >
-          <option value="">No category</option>
-          {categories.map((category) => (
-            <option key={category.id} value={String(category.id)}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-
-        <Text as="p" variant="body-sm" weight="bold">
-          Ingredients
-        </Text>
-        {newRecipeValues.ingredients.map((ingredient, index) => (
-          <Box key={`new-ingredient-${index}`} display="grid" gap={1}>
-            <select
-              value={ingredient.productId}
-              onChange={(event) => updateNewIngredient(index, 'productId', event.target.value)}
-            >
-              <option value="">Select product</option>
-              {products.map((product) => (
-                <option key={product.id} value={String(product.id)}>
-                  {product.name}
-                </option>
-              ))}
-            </select>
-            <Input
-              id={`new-ingredient-${index}-quantity`}
-              type="number"
-              label="Quantity"
-              value={ingredient.quantity}
-              onChange={(event) => updateNewIngredient(index, 'quantity', event.target.value)}
-              fullWidth
-            />
-            <Box display="flex" justifyContent="flex-end">
-              <Button
-                type="button"
-                variant="outline"
-                intent="danger"
-                disabled={newRecipeValues.ingredients.length === 1}
-                onClick={() => removeIngredient('new', index)}
-              >
-                Remove ingredient
-              </Button>
-            </Box>
-          </Box>
-        ))}
-
-        <Box display="flex" justifyContent="space-between" gap={2}>
-          <Button type="button" variant="outline" onClick={() => addIngredient('new')}>
-            Add ingredient
-          </Button>
+        <Box display="flex" justifyContent="flex-end" gap={2}>
           <Button type="submit" isLoading={isCreating} intent="info">
             Add recipe
           </Button>

@@ -120,10 +120,7 @@ export const useProducts = (): UseProductsState => {
     }
   };
 
-  const updateProduct = async (
-    id: Product['id'],
-    input: ProductPayload,
-  ): Promise<boolean> => {
+  const updateProduct = async (id: Product['id'], input: ProductPayload): Promise<boolean> => {
     const normalizedInput: ProductPayload = {
       name: input.name.trim(),
       unit: input.unit.trim(),

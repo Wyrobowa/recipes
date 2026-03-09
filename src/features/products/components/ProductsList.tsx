@@ -27,11 +27,11 @@ const ProductsList = () => {
   } = useProducts();
 
   const [newProductValues, setNewProductValues] = useState<ProductFormValues>(
-    createEmptyProductFormValues(),
+    createEmptyProductFormValues()
   );
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [editingProductValues, setEditingProductValues] = useState<ProductFormValues>(
-    createEmptyProductFormValues(),
+    createEmptyProductFormValues()
   );
 
   const updateNewProductField = (field: keyof ProductFormValues, value: string) => {

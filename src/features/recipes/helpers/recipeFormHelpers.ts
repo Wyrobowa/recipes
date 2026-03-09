@@ -66,10 +66,7 @@ export const toRecipePayload = (values: RecipeFormValues): RecipePayload => {
     description: values.description.trim() || undefined,
     recipe: values.recipe,
     photo: values.photo.trim() || undefined,
-    category:
-      Number.isInteger(categoryNumber) && categoryNumber > 0
-        ? categoryNumber
-        : undefined,
+    category: Number.isInteger(categoryNumber) && categoryNumber > 0 ? categoryNumber : undefined,
     products,
   };
 };

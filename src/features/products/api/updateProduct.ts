@@ -2,10 +2,7 @@ import { API_BASE_URL } from '../../../app/config/env.ts';
 import type { ProductPayload } from '../types.ts';
 import { extractApiErrorMessage } from './extractApiErrorMessage.ts';
 
-export const updateProduct = async (
-  id: string | number,
-  input: ProductPayload,
-): Promise<void> => {
+export const updateProduct = async (id: string | number, input: ProductPayload): Promise<void> => {
   const response = await fetch(`${API_BASE_URL}/product/${id}`, {
     method: 'PUT',
     headers: {

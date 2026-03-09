@@ -14,7 +14,7 @@ const toNumber = (value: number | string | undefined): number => {
 };
 
 const normalizeCategory = (
-  category: string | ApiRecipeCategory | null | undefined,
+  category: string | ApiRecipeCategory | null | undefined
 ): RecipeCategory | null => {
   if (!category || typeof category === 'string') {
     return null;

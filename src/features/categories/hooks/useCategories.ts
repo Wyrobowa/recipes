@@ -84,10 +84,7 @@ export const useCategories = (): UseCategoriesState => {
     }
   };
 
-  const updateCategory = async (
-    id: Category['id'],
-    name: string,
-  ): Promise<boolean> => {
+  const updateCategory = async (id: Category['id'], name: string): Promise<boolean> => {
     const trimmedName = name.trim();
     if (!trimmedName) {
       setActionError('Category name is required.');

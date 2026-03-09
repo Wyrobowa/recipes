@@ -8,7 +8,7 @@ export const getRecipeMeta = (recipe: Recipe): string => {
   const productsCount = recipe.products.length;
   const calories = recipe.products.reduce(
     (total, product) => total + product.kcal * product.quantity,
-    0,
+    0
   );
 
   return `${category} | ${productsCount} ingredient${productsCount === 1 ? '' : 's'} | ${Math.round(calories)} kcal`;
