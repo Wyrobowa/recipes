@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '../../../app/config/env.ts';
+import { getApiDataArray, throwIfResponseNotOk } from '../../shared/api/responseHelpers.ts';
 import type { ApiCategory, Category } from '../types.ts';
 
 const normalizeCategory = (category: ApiCategory): Category => ({
@@ -9,20 +10,10 @@ const normalizeCategory = (category: ApiCategory): Category => ({
 
 export const fetchCategories = async (): Promise<Category[]> => {
   const response = await fetch(`${API_BASE_URL}/categories`);
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch categories (${response.status})`);
-  }
+  await throwIfResponseNotOk(response, 'fetch categories');
 
   const payload: unknown = await response.json();
-  const data = Array.isArray(payload)
-    ? payload
-    : typeof payload === 'object' &&
-        payload !== null &&
-        'data' in payload &&
-        Array.isArray((payload as { data: unknown }).data)
-      ? (payload as { data: unknown[] }).data
-      : null;
+  const data = getApiDataArray(payload);
 
   if (!data) {
     throw new Error('Invalid categories response');

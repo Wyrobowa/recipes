@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '../../../app/config/env.ts';
+import { getApiDataArray, throwIfResponseNotOk } from '../../shared/api/responseHelpers.ts';
 import type { ApiProduct, Product } from '../types.ts';
 
 const toNumber = (value: number | string | undefined): number => {
@@ -18,20 +19,10 @@ const normalizeProduct = (product: ApiProduct): Product => ({
 
 export const fetchProducts = async (): Promise<Product[]> => {
   const response = await fetch(`${API_BASE_URL}/products`);
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch products (${response.status})`);
-  }
+  await throwIfResponseNotOk(response, 'fetch products');
 
   const payload: unknown = await response.json();
-  const data = Array.isArray(payload)
-    ? payload
-    : typeof payload === 'object' &&
-        payload !== null &&
-        'data' in payload &&
-        Array.isArray((payload as { data: unknown }).data)
-      ? (payload as { data: unknown[] }).data
-      : null;
+  const data = getApiDataArray(payload);
 
   if (!data) {
     throw new Error('Invalid products response');

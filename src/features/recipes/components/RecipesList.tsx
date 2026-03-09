@@ -1,19 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import type { FormEventHandler } from 'react';
 import { Box, Button, Loader, Modal, Notification, Text } from 'tharaday';
-import { fetchCategories } from '../../categories/index.ts';
-import type { Category } from '../../categories/types.ts';
-import { fetchProducts } from '../../products/index.ts';
-import type { Product } from '../../products/types.ts';
 import {
-  createEmptyRecipeFormValues,
-  defaultIngredientProductId,
-  toRecipeFormValues,
   toRecipePayload,
-  type RecipeFormValues,
 } from '../helpers/recipeFormHelpers.ts';
 import RecipeFormFields from './RecipeFormFields.tsx';
 import RecipeListItem from './RecipeListItem.tsx';
+import { useRecipeFormState } from '../hooks/useRecipeFormState.ts';
+import { useRecipeOptions } from '../hooks/useRecipeOptions.ts';
 import { useRecipes } from '../hooks/useRecipes.ts';
 import type { Recipe } from '../types.ts';
 
@@ -21,6 +15,8 @@ type RecipesListProps = {
   isCreateModalOpen: boolean;
   onCloseCreateModal: () => void;
 };
+
+const createFormId = 'create-recipe-form';
 
 const RecipesList = ({ isCreateModalOpen, onCloseCreateModal }: RecipesListProps) => {
   const {
@@ -36,175 +32,38 @@ const RecipesList = ({ isCreateModalOpen, onCloseCreateModal }: RecipesListProps
     deleteRecipe,
   } = useRecipes();
 
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [isOptionsLoading, setIsOptionsLoading] = useState(true);
-  const [optionsError, setOptionsError] = useState<string | null>(null);
+  const { categories, products, isOptionsLoading, optionsError } = useRecipeOptions();
 
-  const [newRecipeValues, setNewRecipeValues] = useState<RecipeFormValues>(
-    createEmptyRecipeFormValues()
-  );
-  const [editingRecipeId, setEditingRecipeId] = useState<string | null>(null);
-  const [editingRecipeValues, setEditingRecipeValues] = useState<RecipeFormValues>(
-    createEmptyRecipeFormValues()
-  );
+  const {
+    newRecipeValues,
+    editingRecipeId,
+    editingRecipeValues,
+    updateNewRecipeField,
+    updateEditingField,
+    updateNewIngredient,
+    updateEditingIngredient,
+    addNewIngredient,
+    addEditingIngredient,
+    removeNewIngredient,
+    removeEditingIngredient,
+    syncNewRecipeDefaultProduct,
+    resetNewRecipeValues,
+    startEditing,
+    cancelEditing,
+  } = useRecipeFormState();
 
   useEffect(() => {
-    let cancelled = false;
-
-    const loadOptions = async () => {
-      try {
-        setIsOptionsLoading(true);
-        setOptionsError(null);
-
-        const [loadedCategories, loadedProducts] = await Promise.all([
-          fetchCategories(),
-          fetchProducts(),
-        ]);
-
-        if (!cancelled) {
-          setCategories(loadedCategories);
-          setProducts(loadedProducts);
-          setNewRecipeValues((current) => {
-            if (current.ingredients[0]?.productId || loadedProducts.length === 0) {
-              return current;
-            }
-
-            return {
-              ...current,
-              ingredients: [
-                {
-                  productId: defaultIngredientProductId(loadedProducts),
-                  quantity: current.ingredients[0]?.quantity ?? '1',
-                },
-              ],
-            };
-          });
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setOptionsError(
-            err instanceof Error ? err.message : 'Failed to load categories or products'
-          );
-        }
-      } finally {
-        if (!cancelled) {
-          setIsOptionsLoading(false);
-        }
-      }
-    };
-
-    loadOptions();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const updateNewRecipeField = (
-    field: Exclude<keyof RecipeFormValues, 'ingredients'>,
-    value: string
-  ) => {
-    setNewRecipeValues((current) => ({ ...current, [field]: value }));
-  };
-
-  const updateEditingField = (
-    field: Exclude<keyof RecipeFormValues, 'ingredients'>,
-    value: string
-  ) => {
-    setEditingRecipeValues((current) => ({ ...current, [field]: value }));
-  };
-
-  const updateIngredient = (
-    values: RecipeFormValues,
-    index: number,
-    field: 'productId' | 'quantity',
-    value: string
-  ): RecipeFormValues => ({
-    ...values,
-    ingredients: values.ingredients.map((ingredient, ingredientIndex) =>
-      ingredientIndex === index ? { ...ingredient, [field]: value } : ingredient
-    ),
-  });
-
-  const updateNewIngredient = (index: number, field: 'productId' | 'quantity', value: string) => {
-    setNewRecipeValues((current) => updateIngredient(current, index, field, value));
-  };
-
-  const updateEditingIngredient = (
-    index: number,
-    field: 'productId' | 'quantity',
-    value: string
-  ) => {
-    setEditingRecipeValues((current) => updateIngredient(current, index, field, value));
-  };
-
-  const addIngredient = (target: 'new' | 'edit') => {
-    const nextIngredient = {
-      productId: defaultIngredientProductId(products),
-      quantity: '1',
-    };
-
-    if (target === 'new') {
-      setNewRecipeValues((current) => ({
-        ...current,
-        ingredients: [...current.ingredients, nextIngredient],
-      }));
-      return;
-    }
-
-    setEditingRecipeValues((current) => ({
-      ...current,
-      ingredients: [...current.ingredients, nextIngredient],
-    }));
-  };
-
-  const removeIngredient = (target: 'new' | 'edit', index: number) => {
-    const removeFromValues = (values: RecipeFormValues): RecipeFormValues => {
-      if (values.ingredients.length === 1) {
-        return values;
-      }
-
-      return {
-        ...values,
-        ingredients: values.ingredients.filter((_, ingredientIndex) => ingredientIndex !== index),
-      };
-    };
-
-    if (target === 'new') {
-      setNewRecipeValues((current) => removeFromValues(current));
-      return;
-    }
-
-    setEditingRecipeValues((current) => removeFromValues(current));
-  };
+    syncNewRecipeDefaultProduct(products);
+  }, [products]);
 
   const handleCreate: FormEventHandler<HTMLElement> = async (event) => {
     event.preventDefault();
 
     const created = await createRecipe(toRecipePayload(newRecipeValues));
     if (created) {
-      setNewRecipeValues({
-        ...createEmptyRecipeFormValues(),
-        ingredients: [
-          {
-            productId: defaultIngredientProductId(products),
-            quantity: '1',
-          },
-        ],
-      });
+      resetNewRecipeValues(products);
       onCloseCreateModal();
     }
-  };
-
-  const startEditing = (recipe: Recipe) => {
-    setEditingRecipeId(String(recipe.id));
-    setEditingRecipeValues(toRecipeFormValues(recipe));
-  };
-
-  const cancelEditing = () => {
-    setEditingRecipeId(null);
-    setEditingRecipeValues(createEmptyRecipeFormValues());
   };
 
   const handleSave = async (recipe: Recipe) => {
@@ -245,8 +104,6 @@ const RecipesList = ({ isCreateModalOpen, onCloseCreateModal }: RecipesListProps
     );
   }
 
-  const createFormId = 'create-recipe-form';
-
   return (
     <Box display="grid" gap={3}>
       {actionError ? (
@@ -275,8 +132,8 @@ const RecipesList = ({ isCreateModalOpen, onCloseCreateModal }: RecipesListProps
             onStartEditing={startEditing}
             onChangeField={updateEditingField}
             onChangeIngredient={updateEditingIngredient}
-            onAddIngredient={() => addIngredient('edit')}
-            onRemoveIngredient={(index) => removeIngredient('edit', index)}
+            onAddIngredient={() => addEditingIngredient(products)}
+            onRemoveIngredient={removeEditingIngredient}
             onCancelEditing={cancelEditing}
             onSave={handleSave}
             onDelete={handleDelete}
@@ -309,8 +166,8 @@ const RecipesList = ({ isCreateModalOpen, onCloseCreateModal }: RecipesListProps
             titleError={actionError ?? undefined}
             onFieldChange={updateNewRecipeField}
             onIngredientChange={updateNewIngredient}
-            onAddIngredient={() => addIngredient('new')}
-            onRemoveIngredient={(index) => removeIngredient('new', index)}
+            onAddIngredient={() => addNewIngredient(products)}
+            onRemoveIngredient={removeNewIngredient}
           />
         </Box>
       </Modal>

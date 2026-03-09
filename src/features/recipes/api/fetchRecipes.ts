@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '../../../app/config/env.ts';
+import { getApiDataArray, throwIfResponseNotOk } from '../../shared/api/responseHelpers.ts';
 import type {
   ApiRecipe,
   ApiRecipeCategory,
@@ -56,20 +57,10 @@ const normalizeRecipe = (recipe: ApiRecipe): Recipe => ({
 
 export const fetchRecipes = async (): Promise<Recipe[]> => {
   const response = await fetch(`${API_BASE_URL}/recipes`);
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch recipes (${response.status})`);
-  }
+  await throwIfResponseNotOk(response, 'fetch recipes');
 
   const payload: unknown = await response.json();
-  const data = Array.isArray(payload)
-    ? payload
-    : typeof payload === 'object' &&
-        payload !== null &&
-        'data' in payload &&
-        Array.isArray((payload as { data: unknown }).data)
-      ? (payload as { data: unknown[] }).data
-      : null;
+  const data = getApiDataArray(payload);
 
   if (!data) {
     throw new Error('Invalid recipes response');
