@@ -1,5 +1,5 @@
-import './App.css'
-import RecipesList from './pages/recipes/RecipesList.tsx'
+import './App.css';
+import RecipesList from './pages/recipes/RecipesList.tsx';
 
 const App = () => (
   <main className="page">
@@ -12,6 +12,6 @@ const App = () => (
       <RecipesList />
     </section>
   </main>
-)
+);
 
-export default App
+export default App;
