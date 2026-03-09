@@ -1,33 +1,33 @@
 import { useEffect, useState } from 'react';
-import { fetchRecipes } from '../api/fetchRecipes.ts';
-import type { Recipe } from '../types.ts';
+import { fetchCategories } from '../api/fetchCategories.ts';
+import type { Category } from '../types.ts';
 
-type UseRecipesState = {
-  recipes: Recipe[];
+type UseCategoriesState = {
+  categories: Category[];
   isLoading: boolean;
   error: string | null;
 };
 
-export const useRecipes = (): UseRecipesState => {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+export const useCategories = (): UseCategoriesState => {
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
-    const loadRecipes = async () => {
+    const loadCategories = async () => {
       try {
         setIsLoading(true);
         setError(null);
 
-        const loadedRecipes = await fetchRecipes();
+        const loadedCategories = await fetchCategories();
         if (!cancelled) {
-          setRecipes(loadedRecipes);
+          setCategories(loadedCategories);
         }
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : 'Failed to load recipes');
+          setError(err instanceof Error ? err.message : 'Failed to load categories');
         }
       } finally {
         if (!cancelled) {
@@ -36,12 +36,12 @@ export const useRecipes = (): UseRecipesState => {
       }
     };
 
-    loadRecipes();
+    loadCategories();
 
     return () => {
       cancelled = true;
     };
   }, []);
 
-  return { recipes, isLoading, error };
+  return { categories, isLoading, error };
 };
