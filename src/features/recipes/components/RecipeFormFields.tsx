@@ -1,7 +1,8 @@
-import { Box, Button, Input, Text } from 'tharaday';
+import { Box, Button, Divider, Input, Text } from 'tharaday';
 import type { Category } from '../../categories/types.ts';
 import type { Product } from '../../products/types.ts';
 import type { RecipeFormValues } from '../helpers/recipeFormHelpers.ts';
+import SearchableSelect from '../../shared/components/SearchableSelect.tsx';
 
 type RecipeFormFieldsProps = {
   prefix: string;
@@ -62,40 +63,40 @@ const RecipeFormFields = ({
       fullWidth
     />
 
-    <label htmlFor={`${prefix}-category`}>
-      <Text as="span" variant="body-sm">
-        Category
-      </Text>
-    </label>
-    <select
+    <SearchableSelect
       id={`${prefix}-category`}
+      label="Category"
       value={values.categoryId}
-      onChange={(event) => onFieldChange('categoryId', event.target.value)}
-    >
-      <option value="">No category</option>
-      {categories.map((category) => (
-        <option key={category.id} value={String(category.id)}>
-          {category.name}
-        </option>
-      ))}
-    </select>
+      onValueChange={(nextValue) => onFieldChange('categoryId', nextValue)}
+      options={[
+        { value: '', label: 'No category' },
+        ...categories.map((category) => ({
+          value: String(category.id),
+          label: category.name,
+        })),
+      ]}
+    />
+
+    <Divider spacing={40} />
 
     <Text as="p" variant="body-sm" weight="bold">
       Ingredients
     </Text>
     {values.ingredients.map((ingredient, index) => (
       <Box key={`${prefix}-ingredient-${index}`} display="grid" gap={1}>
-        <select
+        <SearchableSelect
+          id={`${prefix}-ingredient-${index}-product`}
+          label="Product"
           value={ingredient.productId}
-          onChange={(event) => onIngredientChange(index, 'productId', event.target.value)}
-        >
-          <option value="">Select product</option>
-          {products.map((product) => (
-            <option key={product.id} value={String(product.id)}>
-              {product.name}
-            </option>
-          ))}
-        </select>
+          onValueChange={(nextValue) => onIngredientChange(index, 'productId', nextValue)}
+          options={[
+            { value: '', label: 'Select product' },
+            ...products.map((product) => ({
+              value: String(product.id),
+              label: product.name,
+            })),
+          ]}
+        />
         <Input
           id={`${prefix}-ingredient-${index}-quantity`}
           type="number"
