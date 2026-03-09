@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { FormEventHandler } from 'react';
-import { Box, Loader, Notification, Text } from 'tharaday';
+import { Box, Button, Loader, Modal, Notification, Text } from 'tharaday';
 import type { Product } from '../types.ts';
 import {
   createEmptyProductFormValues,
@@ -8,11 +8,16 @@ import {
   toProductPayload,
   type ProductFormValues,
 } from '../helpers/productFormHelpers.ts';
-import ProductCreateForm from './ProductCreateForm.tsx';
+import ProductFormFields from './ProductFormFields.tsx';
 import ProductListItem from './ProductListItem.tsx';
 import { useProducts } from '../hooks/useProducts.ts';
 
-const ProductsList = () => {
+type ProductsListProps = {
+  isCreateModalOpen: boolean;
+  onCloseCreateModal: () => void;
+};
+
+const ProductsList = ({ isCreateModalOpen, onCloseCreateModal }: ProductsListProps) => {
   const {
     products,
     isLoading,
@@ -48,6 +53,7 @@ const ProductsList = () => {
     const created = await createProduct(toProductPayload(newProductValues));
     if (created) {
       setNewProductValues(createEmptyProductFormValues());
+      onCloseCreateModal();
     }
   };
 
@@ -99,16 +105,10 @@ const ProductsList = () => {
     );
   }
 
+  const createFormId = 'create-product-form';
+
   return (
     <Box display="grid" gap={3}>
-      <ProductCreateForm
-        values={newProductValues}
-        actionError={actionError}
-        isCreating={isCreating}
-        onChange={updateNewProductField}
-        onSubmit={handleSubmit}
-      />
-
       {actionError ? (
         <Notification intent="danger" title="Product action failed">
           {actionError}
@@ -138,6 +138,32 @@ const ProductsList = () => {
           />
         ))}
       </Box>
+
+      <Modal
+        isOpen={isCreateModalOpen}
+        onClose={onCloseCreateModal}
+        title="Add product"
+        footer={
+          <Box display="flex" gap={2} justifyContent="flex-end" fullWidth>
+            <Button variant="outline" onClick={onCloseCreateModal}>
+              Cancel
+            </Button>
+            <Button type="submit" form={createFormId} isLoading={isCreating} intent="info">
+              Add product
+            </Button>
+          </Box>
+        }
+      >
+        <Box as="form" id={createFormId} onSubmit={handleSubmit} display="grid" gap={2}>
+          <ProductFormFields
+            prefix="new-product"
+            values={newProductValues}
+            onChange={updateNewProductField}
+            showError={Boolean(actionError)}
+            errorMessage={actionError ?? undefined}
+          />
+        </Box>
+      </Modal>
     </Box>
   );
 };

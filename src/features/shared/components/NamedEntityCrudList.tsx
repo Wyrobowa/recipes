@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { FormEventHandler } from 'react';
-import { Box, Button, Card, CardContent, Input, Loader, Notification, Text } from 'tharaday';
+import { Box, Button, Card, CardContent, Input, Loader, Modal, Notification, Text } from 'tharaday';
 
 export type NamedEntity = {
   id: string | number;
@@ -23,6 +23,8 @@ type NamedEntityCrudListProps<TItem extends NamedEntity> = {
   onCreate: (name: string) => Promise<boolean>;
   onUpdate: (id: TItem['id'], name: string) => Promise<boolean>;
   onDelete: (id: TItem['id']) => Promise<boolean>;
+  isCreateModalOpen: boolean;
+  onCloseCreateModal: () => void;
 };
 
 const capitalize = (value: string): string => value.charAt(0).toUpperCase() + value.slice(1);
@@ -42,6 +44,8 @@ const NamedEntityCrudList = <TItem extends NamedEntity>({
   onCreate,
   onUpdate,
   onDelete,
+  isCreateModalOpen,
+  onCloseCreateModal,
 }: NamedEntityCrudListProps<TItem>) => {
   const [newItemName, setNewItemName] = useState('');
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
@@ -53,6 +57,7 @@ const NamedEntityCrudList = <TItem extends NamedEntity>({
     const created = await onCreate(newItemName);
     if (created) {
       setNewItemName('');
+      onCloseCreateModal();
     }
   };
 
@@ -105,27 +110,10 @@ const NamedEntityCrudList = <TItem extends NamedEntity>({
   }
 
   const singularTitle = capitalize(singularLabel);
+  const createFormId = `create-${singularLabel}-form`;
 
   return (
     <Box display="grid" gap={3}>
-      <Box as="form" onSubmit={handleSubmit} display="grid" gap={2}>
-        <Input
-          id={inputId}
-          label={`${singularTitle} name`}
-          placeholder={inputPlaceholder}
-          value={newItemName}
-          onChange={(event) => setNewItemName(event.target.value)}
-          error={Boolean(actionError)}
-          helperText={actionError ?? undefined}
-          fullWidth
-        />
-        <Box display="flex" justifyContent="flex-end">
-          <Button type="submit" isLoading={isCreating} intent="info">
-            Add {singularLabel}
-          </Button>
-        </Box>
-      </Box>
-
       {actionError ? (
         <Notification intent="danger" title={`${singularTitle} action failed`}>
           {actionError}
@@ -195,6 +183,35 @@ const NamedEntityCrudList = <TItem extends NamedEntity>({
           </Box>
         ))}
       </Box>
+
+      <Modal
+        isOpen={isCreateModalOpen}
+        onClose={onCloseCreateModal}
+        title={`Add ${singularLabel}`}
+        footer={
+          <Box display="flex" gap={2} justifyContent="flex-end" fullWidth>
+            <Button variant="outline" onClick={onCloseCreateModal}>
+              Cancel
+            </Button>
+            <Button type="submit" form={createFormId} isLoading={isCreating} intent="info">
+              Add {singularLabel}
+            </Button>
+          </Box>
+        }
+      >
+        <Box as="form" id={createFormId} onSubmit={handleSubmit} display="grid" gap={2}>
+          <Input
+            id={inputId}
+            label={`${singularTitle} name`}
+            placeholder={inputPlaceholder}
+            value={newItemName}
+            onChange={(event) => setNewItemName(event.target.value)}
+            error={Boolean(actionError)}
+            helperText={actionError ?? undefined}
+            fullWidth
+          />
+        </Box>
+      </Modal>
     </Box>
   );
 };

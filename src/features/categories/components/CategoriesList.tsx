@@ -2,7 +2,12 @@ import NamedEntityCrudList from '../../shared/components/NamedEntityCrudList.tsx
 import { categoryListConfig } from '../helpers/categoryListConfig.ts';
 import { useCategories } from '../hooks/useCategories.ts';
 
-const CategoriesList = () => {
+type CategoriesListProps = {
+  isCreateModalOpen: boolean;
+  onCloseCreateModal: () => void;
+};
+
+const CategoriesList = ({ isCreateModalOpen, onCloseCreateModal }: CategoriesListProps) => {
   const {
     categories,
     isLoading,
@@ -32,6 +37,8 @@ const CategoriesList = () => {
       onCreate={createCategory}
       onUpdate={updateCategory}
       onDelete={deleteCategory}
+      isCreateModalOpen={isCreateModalOpen}
+      onCloseCreateModal={onCloseCreateModal}
     />
   );
 };

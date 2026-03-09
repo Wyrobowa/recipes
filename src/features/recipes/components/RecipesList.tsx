@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { FormEventHandler } from 'react';
-import { Box, Button, Loader, Notification, Text } from 'tharaday';
+import { Box, Button, Loader, Modal, Notification, Text } from 'tharaday';
 import { fetchCategories } from '../../categories/index.ts';
 import type { Category } from '../../categories/types.ts';
 import { fetchProducts } from '../../products/index.ts';
@@ -17,7 +17,12 @@ import RecipeListItem from './RecipeListItem.tsx';
 import { useRecipes } from '../hooks/useRecipes.ts';
 import type { Recipe } from '../types.ts';
 
-const RecipesList = () => {
+type RecipesListProps = {
+  isCreateModalOpen: boolean;
+  onCloseCreateModal: () => void;
+};
+
+const RecipesList = ({ isCreateModalOpen, onCloseCreateModal }: RecipesListProps) => {
   const {
     recipes,
     isLoading,
@@ -188,6 +193,7 @@ const RecipesList = () => {
           },
         ],
       });
+      onCloseCreateModal();
     }
   };
 
@@ -239,28 +245,10 @@ const RecipesList = () => {
     );
   }
 
+  const createFormId = 'create-recipe-form';
+
   return (
     <Box display="grid" gap={3}>
-      <Box as="form" onSubmit={handleCreate} display="grid" gap={2}>
-        <RecipeFormFields
-          prefix="new-recipe"
-          values={newRecipeValues}
-          categories={categories}
-          products={products}
-          titleError={actionError ?? undefined}
-          onFieldChange={updateNewRecipeField}
-          onIngredientChange={updateNewIngredient}
-          onAddIngredient={() => addIngredient('new')}
-          onRemoveIngredient={(index) => removeIngredient('new', index)}
-        />
-
-        <Box display="flex" justifyContent="flex-end" gap={2}>
-          <Button type="submit" isLoading={isCreating} intent="info">
-            Add recipe
-          </Button>
-        </Box>
-      </Box>
-
       {actionError ? (
         <Notification intent="danger" title="Recipe action failed">
           {actionError}
@@ -295,6 +283,37 @@ const RecipesList = () => {
           />
         ))}
       </Box>
+
+      <Modal
+        isOpen={isCreateModalOpen}
+        onClose={onCloseCreateModal}
+        title="Add recipe"
+        size="lg"
+        footer={
+          <Box display="flex" gap={2} justifyContent="flex-end" fullWidth>
+            <Button variant="outline" onClick={onCloseCreateModal}>
+              Cancel
+            </Button>
+            <Button type="submit" form={createFormId} isLoading={isCreating} intent="info">
+              Add recipe
+            </Button>
+          </Box>
+        }
+      >
+        <Box as="form" id={createFormId} onSubmit={handleCreate} display="grid" gap={2}>
+          <RecipeFormFields
+            prefix="new-recipe"
+            values={newRecipeValues}
+            categories={categories}
+            products={products}
+            titleError={actionError ?? undefined}
+            onFieldChange={updateNewRecipeField}
+            onIngredientChange={updateNewIngredient}
+            onAddIngredient={() => addIngredient('new')}
+            onRemoveIngredient={(index) => removeIngredient('new', index)}
+          />
+        </Box>
+      </Modal>
     </Box>
   );
 };
