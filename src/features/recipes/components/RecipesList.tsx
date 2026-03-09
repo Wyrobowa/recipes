@@ -1,4 +1,5 @@
-import { Box, Card, CardContent, Loader, Notification, Text } from 'tharaday';
+import { Box, Loader, Notification, Text } from 'tharaday';
+import RecipeListItem from './RecipeListItem.tsx';
 import { useRecipes } from '../hooks/useRecipes.ts';
 
 const RecipesList = () => {
@@ -34,18 +35,7 @@ const RecipesList = () => {
   return (
     <Box as="ul" display="grid" gap={3} margin={0} padding={0} style={{ listStyle: 'none' }}>
       {recipes.map((recipe) => (
-        <Box as="li" key={recipe.id}>
-          <Card bordered>
-            <CardContent>
-              <Text as="h3" variant="h6" marginBottom={1}>
-                {recipe.name}
-              </Text>
-              <Text as="p" variant="body-md" color="subtle">
-                {recipe.description || 'No description provided.'}
-              </Text>
-            </CardContent>
-          </Card>
-        </Box>
+        <RecipeListItem key={recipe.id} recipe={recipe} />
       ))}
     </Box>
   );
