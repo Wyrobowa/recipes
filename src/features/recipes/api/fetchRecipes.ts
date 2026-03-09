@@ -39,6 +39,9 @@ const normalizeRecipeProduct = (item: ApiRecipeProduct): RecipeProduct | null =>
     unit: item.product.unit ?? '',
     quantity: toNumber(item.quantity),
     kcal: toNumber(item.product.kcal),
+    protein_g: toNumber(item.product.protein_g),
+    carbs_g: toNumber(item.product.carbs_g),
+    fat_g: toNumber(item.product.fat_g),
   };
 };
 

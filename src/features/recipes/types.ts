@@ -45,6 +45,9 @@ export type RecipeProduct = {
   unit: string;
   quantity: number;
   kcal: number;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
 };
 
 export type Recipe = {

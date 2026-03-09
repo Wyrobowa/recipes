@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import type { FormEventHandler } from 'react';
 import { Box, Button, Loader, Modal, Notification, Text } from 'tharaday';
-import {
-  toRecipePayload,
-} from '../helpers/recipeFormHelpers.ts';
+import RecipeFiltersPanel from './RecipeFiltersPanel.tsx';
 import RecipeFormFields from './RecipeFormFields.tsx';
 import RecipeListItem from './RecipeListItem.tsx';
+import { toRecipePayload } from '../helpers/recipeFormHelpers.ts';
+import { useRecipeFilters } from '../hooks/useRecipeFilters.ts';
 import { useRecipeFormState } from '../hooks/useRecipeFormState.ts';
 import { useRecipeOptions } from '../hooks/useRecipeOptions.ts';
 import { useRecipes } from '../hooks/useRecipes.ts';
@@ -33,6 +33,20 @@ const RecipesList = ({ isCreateModalOpen, onCloseCreateModal }: RecipesListProps
   } = useRecipes();
 
   const { categories, products, isOptionsLoading, optionsError } = useRecipeOptions();
+  const {
+    filters,
+    filteredRecipes,
+    nutritionBounds,
+    sliderRanges,
+    hasActiveFilters,
+    setQuery,
+    setCategoryFilter,
+    clearFilters,
+    setKcalRange,
+    setProteinRange,
+    setCarbsRange,
+    setFatRange,
+  } = useRecipeFilters(recipes);
 
   const {
     newRecipeValues,
@@ -54,7 +68,7 @@ const RecipesList = ({ isCreateModalOpen, onCloseCreateModal }: RecipesListProps
 
   useEffect(() => {
     syncNewRecipeDefaultProduct(products);
-  }, [products]);
+  }, [products, syncNewRecipeDefaultProduct]);
 
   const handleCreate: FormEventHandler<HTMLElement> = async (event) => {
     event.preventDefault();
@@ -118,8 +132,31 @@ const RecipesList = ({ isCreateModalOpen, onCloseCreateModal }: RecipesListProps
         </Notification>
       ) : null}
 
+      {recipes.length > 0 ? (
+        <RecipeFiltersPanel
+          categories={categories}
+          filters={filters}
+          nutritionBounds={nutritionBounds}
+          sliderRanges={sliderRanges}
+          hasActiveFilters={hasActiveFilters}
+          onQueryChange={setQuery}
+          onCategoryFilterChange={setCategoryFilter}
+          onClearFilters={clearFilters}
+          onKcalRangeChange={setKcalRange}
+          onProteinRangeChange={setProteinRange}
+          onCarbsRangeChange={setCarbsRange}
+          onFatRangeChange={setFatRange}
+        />
+      ) : null}
+
+      {recipes.length > 0 && filteredRecipes.length === 0 ? (
+        <Notification intent="neutral" title="No recipes match the current filters">
+          Try changing or clearing your filters.
+        </Notification>
+      ) : null}
+
       <Box as="ul" display="grid" gap={3} margin={0} padding={0} style={{ listStyle: 'none' }}>
-        {recipes.map((recipe) => (
+        {filteredRecipes.map((recipe) => (
           <RecipeListItem
             key={recipe.id}
             recipe={recipe}

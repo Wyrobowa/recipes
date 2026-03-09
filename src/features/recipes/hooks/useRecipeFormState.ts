@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import type { Product } from '../../products/types.ts';
 import {
   createEmptyRecipeFormValues,
@@ -111,7 +111,7 @@ export const useRecipeFormState = (): UseRecipeFormState => {
     setEditingRecipeValues((current) => removeIngredient(current, index));
   };
 
-  const syncNewRecipeDefaultProduct = (products: Product[]) => {
+  const syncNewRecipeDefaultProduct = useCallback((products: Product[]) => {
     setNewRecipeValues((current) => {
       if (current.ingredients[0]?.productId || products.length === 0) {
         return current;
@@ -127,7 +127,7 @@ export const useRecipeFormState = (): UseRecipeFormState => {
         ],
       };
     });
-  };
+  }, []);
 
   const resetNewRecipeValues = (products: Product[]) => {
     setNewRecipeValues({
