@@ -6,15 +6,16 @@ import RecipesPage from './pages/recipes/RecipesPage.tsx';
 
 const navItems = [
   { id: 'recipes', label: 'Recipes', href: '/recipes' },
-  { id: 'categories', label: 'Categories', href: '/categories' },
   { id: 'products', label: 'Products', href: '/products' },
+  { id: 'categories', label: 'Categories', href: '/categories' },
 ];
 
 const App = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const activeNavId = navItems.find((item) => location.pathname.startsWith(item.href))?.id ?? 'recipes';
+  const activeNavId =
+    navItems.find((item) => location.pathname.startsWith(item.href))?.id ?? 'recipes';
 
   return (
     <AppLayout
@@ -26,8 +27,8 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Navigate to="/recipes" replace />} />
         <Route path="/recipes" element={<RecipesPage />} />
-        <Route path="/categories" element={<CategoriesPage />} />
         <Route path="/products" element={<ProductsPage />} />
+        <Route path="/categories" element={<CategoriesPage />} />
       </Routes>
     </AppLayout>
   );

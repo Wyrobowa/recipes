@@ -3,12 +3,25 @@ export type ApiProduct = {
   _id?: number | string;
   name?: string;
   title?: string;
-  slug?: string;
-  description?: string;
+  unit?: string;
+  protein_g?: number | string;
+  carbs_g?: number | string;
+  fat_g?: number | string;
 };
 
 export type Product = {
   id: number | string;
   name: string;
-  slug: string;
+  unit: string;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
+};
+
+export type ProductPayload = {
+  name: string;
+  unit: string;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
 };

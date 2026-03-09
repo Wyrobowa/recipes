@@ -4,4 +4,4 @@ export { fetchProducts } from './api/fetchProducts.ts';
 export { createProduct } from './api/createProduct.ts';
 export { updateProduct } from './api/updateProduct.ts';
 export { deleteProduct } from './api/deleteProduct.ts';
-export type { ApiProduct, Product } from './types.ts';
+export type { ApiProduct, Product, ProductPayload } from './types.ts';

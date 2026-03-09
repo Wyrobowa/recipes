@@ -1,10 +1,18 @@
 import { API_BASE_URL } from '../../../app/config/env.ts';
 import type { ApiProduct, Product } from '../types.ts';
 
+const toNumber = (value: number | string | undefined): number => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
 const normalizeProduct = (product: ApiProduct): Product => ({
   id: product.id ?? product._id ?? crypto.randomUUID(),
   name: product.name ?? product.title ?? 'Untitled product',
-  slug: product.slug ?? '',
+  unit: product.unit ?? '',
+  protein_g: toNumber(product.protein_g),
+  carbs_g: toNumber(product.carbs_g),
+  fat_g: toNumber(product.fat_g),
 });
 
 export const fetchProducts = async (): Promise<Product[]> => {

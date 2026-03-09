@@ -3,7 +3,7 @@ import { createProduct as createProductRequest } from '../api/createProduct.ts';
 import { deleteProduct as deleteProductRequest } from '../api/deleteProduct.ts';
 import { fetchProducts } from '../api/fetchProducts.ts';
 import { updateProduct as updateProductRequest } from '../api/updateProduct.ts';
-import type { Product } from '../types.ts';
+import type { Product, ProductPayload } from '../types.ts';
 
 type UseProductsState = {
   products: Product[];
@@ -13,9 +13,33 @@ type UseProductsState = {
   updatingProductId: Product['id'] | null;
   deletingProductId: Product['id'] | null;
   actionError: string | null;
-  createProduct: (name: string) => Promise<boolean>;
-  updateProduct: (id: Product['id'], name: string) => Promise<boolean>;
+  createProduct: (input: ProductPayload) => Promise<boolean>;
+  updateProduct: (id: Product['id'], input: ProductPayload) => Promise<boolean>;
   deleteProduct: (id: Product['id']) => Promise<boolean>;
+};
+
+const validateProductPayload = (input: ProductPayload): string | null => {
+  if (!input.name.trim()) {
+    return 'Product name is required.';
+  }
+
+  if (!input.unit.trim()) {
+    return 'Product unit is required.';
+  }
+
+  if (!Number.isFinite(input.protein_g) || input.protein_g < 0) {
+    return 'Protein must be a number greater than or equal to 0.';
+  }
+
+  if (!Number.isFinite(input.carbs_g) || input.carbs_g < 0) {
+    return 'Carbohydrates must be a number greater than or equal to 0.';
+  }
+
+  if (!Number.isFinite(input.fat_g) || input.fat_g < 0) {
+    return 'Fat must be a number greater than or equal to 0.';
+  }
+
+  return null;
 };
 
 export const useProducts = (): UseProductsState => {
@@ -62,10 +86,17 @@ export const useProducts = (): UseProductsState => {
     setProducts(loadedProducts);
   };
 
-  const createProduct = async (name: string): Promise<boolean> => {
-    const trimmedName = name.trim();
-    if (!trimmedName) {
-      setActionError('Product name is required.');
+  const createProduct = async (input: ProductPayload): Promise<boolean> => {
+    const normalizedInput: ProductPayload = {
+      name: input.name.trim(),
+      unit: input.unit.trim(),
+      protein_g: input.protein_g,
+      carbs_g: input.carbs_g,
+      fat_g: input.fat_g,
+    };
+    const validationError = validateProductPayload(normalizedInput);
+    if (validationError) {
+      setActionError(validationError);
       return false;
     }
 
@@ -73,7 +104,7 @@ export const useProducts = (): UseProductsState => {
       setIsCreating(true);
       setActionError(null);
 
-      await createProductRequest(trimmedName);
+      await createProductRequest(normalizedInput);
       await refreshProducts();
       return true;
     } catch (err) {
@@ -86,11 +117,18 @@ export const useProducts = (): UseProductsState => {
 
   const updateProduct = async (
     id: Product['id'],
-    name: string,
+    input: ProductPayload,
   ): Promise<boolean> => {
-    const trimmedName = name.trim();
-    if (!trimmedName) {
-      setActionError('Product name is required.');
+    const normalizedInput: ProductPayload = {
+      name: input.name.trim(),
+      unit: input.unit.trim(),
+      protein_g: input.protein_g,
+      carbs_g: input.carbs_g,
+      fat_g: input.fat_g,
+    };
+    const validationError = validateProductPayload(normalizedInput);
+    if (validationError) {
+      setActionError(validationError);
       return false;
     }
 
@@ -98,7 +136,7 @@ export const useProducts = (): UseProductsState => {
       setUpdatingProductId(id);
       setActionError(null);
 
-      await updateProductRequest(id, trimmedName);
+      await updateProductRequest(id, normalizedInput);
       await refreshProducts();
       return true;
     } catch (err) {
