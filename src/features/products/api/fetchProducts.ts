@@ -10,6 +10,7 @@ const normalizeProduct = (product: ApiProduct): Product => ({
   id: product.id ?? product._id ?? crypto.randomUUID(),
   name: product.name ?? product.title ?? 'Untitled product',
   unit: product.unit ?? '',
+  kcal: toNumber(product.kcal),
   protein_g: toNumber(product.protein_g),
   carbs_g: toNumber(product.carbs_g),
   fat_g: toNumber(product.fat_g),

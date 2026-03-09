@@ -27,6 +27,10 @@ const validateProductPayload = (input: ProductPayload): string | null => {
     return 'Product unit is required.';
   }
 
+  if (!Number.isFinite(input.kcal) || input.kcal < 0) {
+    return 'Calories must be a number greater than or equal to 0.';
+  }
+
   if (!Number.isFinite(input.protein_g) || input.protein_g < 0) {
     return 'Protein must be a number greater than or equal to 0.';
   }
@@ -90,6 +94,7 @@ export const useProducts = (): UseProductsState => {
     const normalizedInput: ProductPayload = {
       name: input.name.trim(),
       unit: input.unit.trim(),
+      kcal: input.kcal,
       protein_g: input.protein_g,
       carbs_g: input.carbs_g,
       fat_g: input.fat_g,
@@ -122,6 +127,7 @@ export const useProducts = (): UseProductsState => {
     const normalizedInput: ProductPayload = {
       name: input.name.trim(),
       unit: input.unit.trim(),
+      kcal: input.kcal,
       protein_g: input.protein_g,
       carbs_g: input.carbs_g,
       fat_g: input.fat_g,

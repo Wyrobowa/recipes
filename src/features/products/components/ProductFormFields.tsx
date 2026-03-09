@@ -36,6 +36,15 @@ const ProductFormFields = ({
       fullWidth
     />
     <Input
+      id={`${prefix}-kcal`}
+      type="number"
+      label="Calories (kcal)"
+      placeholder="0"
+      value={values.kcal}
+      onChange={(event) => onChange('kcal', event.target.value)}
+      fullWidth
+    />
+    <Input
       id={`${prefix}-protein`}
       type="number"
       label="Protein (g)"

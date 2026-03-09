@@ -54,7 +54,7 @@ const ProductListItem = ({
               {product.name}
             </Text>
             <Text as="p" variant="body-sm" color="subtle">
-              Unit: {product.unit}
+              Unit: {product.unit} | Calories: {product.kcal} kcal
             </Text>
             <Text as="p" variant="body-sm" color="subtle">
               Protein: {product.protein_g} g | Carbs: {product.carbs_g} g | Fat: {product.fat_g} g
