@@ -1,22 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
-import { Box, Button, Input, Slider } from 'tharaday';
+import { useCallback, useState } from 'react';
+import { Box, Button, Input } from 'tharaday';
 import type { SliderValue } from 'tharaday';
 import type { Category } from '../../categories/types.ts';
 import SearchableSelect from '../../shared/components/SearchableSelect.tsx';
+import { useClickOutside } from '../../shared/hooks/useClickOutside.ts';
 import type { RecipeFilters } from '../helpers/recipeFilters.ts';
+import type { NutritionBounds, SliderRanges } from '../types/filters.ts';
+import { NutritionSlider } from './NutritionSlider.tsx';
 
-type NutritionBounds = {
-  kcal: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-};
-
-type SliderRanges = {
-  kcal: [number, number];
-  protein: [number, number];
-  carbs: [number, number];
-  fat: [number, number];
+type NutritionHandlers = {
+  onKcalRangeChange: (value: SliderValue) => void;
+  onProteinRangeChange: (value: SliderValue) => void;
+  onCarbsRangeChange: (value: SliderValue) => void;
+  onFatRangeChange: (value: SliderValue) => void;
 };
 
 type RecipeFiltersPanelProps = {
@@ -28,14 +24,7 @@ type RecipeFiltersPanelProps = {
   onQueryChange: (value: string) => void;
   onCategoryFilterChange: (value: string) => void;
   onClearFilters: () => void;
-  onKcalRangeChange: (value: SliderValue) => void;
-  onProteinRangeChange: (value: SliderValue) => void;
-  onCarbsRangeChange: (value: SliderValue) => void;
-  onFatRangeChange: (value: SliderValue) => void;
-};
-
-const toRangeSummary = (range: [number, number], maxBound: number): string =>
-  `Min: ${range[0]} | Max: ${range[1]} (bounds: 0-${maxBound})`;
+} & NutritionHandlers;
 
 const RecipeFiltersPanel = ({
   categories,
@@ -51,21 +40,9 @@ const RecipeFiltersPanel = ({
   onCarbsRangeChange,
   onFatRangeChange,
 }: RecipeFiltersPanelProps) => {
-  const rootRef = useRef<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState(hasActiveFilters);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  const handleClose = useCallback(() => setIsOpen(false), []);
+  const rootRef = useClickOutside<HTMLDivElement>(handleClose, isOpen);
 
   return (
     <div ref={rootRef} style={{ position: 'relative' }}>
@@ -123,51 +100,31 @@ const RecipeFiltersPanel = ({
               gridTemplateColumns="repeat(auto-fit, minmax(360px, 1fr))"
               justifyContent="flex-start"
             >
-              <Slider
+              <NutritionSlider
                 id="recipes-filter-kcal-range"
                 label="Total kcal"
-                min={0}
                 max={nutritionBounds.kcal}
-                step={1}
-                showValue
-                helperText={toRangeSummary(sliderRanges.kcal, nutritionBounds.kcal)}
-                fullWidth
                 value={sliderRanges.kcal}
                 onValueChange={onKcalRangeChange}
               />
-              <Slider
+              <NutritionSlider
                 id="recipes-filter-protein-range"
                 label="Total protein (g)"
-                min={0}
                 max={nutritionBounds.protein}
-                step={1}
-                showValue
-                helperText={toRangeSummary(sliderRanges.protein, nutritionBounds.protein)}
-                fullWidth
                 value={sliderRanges.protein}
                 onValueChange={onProteinRangeChange}
               />
-              <Slider
+              <NutritionSlider
                 id="recipes-filter-carbs-range"
                 label="Total carbs (g)"
-                min={0}
                 max={nutritionBounds.carbs}
-                step={1}
-                showValue
-                helperText={toRangeSummary(sliderRanges.carbs, nutritionBounds.carbs)}
-                fullWidth
                 value={sliderRanges.carbs}
                 onValueChange={onCarbsRangeChange}
               />
-              <Slider
+              <NutritionSlider
                 id="recipes-filter-fat-range"
                 label="Total fat (g)"
-                min={0}
                 max={nutritionBounds.fat}
-                step={1}
-                showValue
-                helperText={toRangeSummary(sliderRanges.fat, nutritionBounds.fat)}
-                fullWidth
                 value={sliderRanges.fat}
                 onValueChange={onFatRangeChange}
               />
