@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { AppLayout, Text } from 'tharaday';
+import { AppLayout, NavBar, Text } from 'tharaday';
 import CategoriesPage from './pages/categories/CategoriesPage.tsx';
 import ProductsPage from './pages/products/ProductsPage.tsx';
 import RecipesPage from './pages/recipes/RecipesPage.tsx';
@@ -19,10 +19,14 @@ const App = () => {
 
   return (
     <AppLayout
-      headerLogo={<Text weight="bold">Recipes</Text>}
-      navItems={navItems}
-      activeNavId={activeNavId}
-      onNavItemClick={(id) => navigate(`/${id}`)}
+      navbar={
+        <NavBar
+          logo={<Text weight="bold">Recipes</Text>}
+          items={navItems}
+          activeId={activeNavId}
+          onItemClick={(id: string) => navigate(`/${id}`)}
+        />
+      }
     >
       <Routes>
         <Route path="/" element={<Navigate to="/recipes" replace />} />
