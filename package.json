@@ -29,11 +29,15 @@
     "globals": "^17.4.0",
     "prettier": "^3.6.2",
     "typescript": "~6.0.2",
+    "typescript-eslint": "^8.57.2",
     "vite": "^8.0.2"
   },
   "overrides": {
     "eslint-plugin-react-hooks": {
       "eslint": "$eslint"
+    },
+    "typescript-eslint": {
+      "typescript": "$typescript"
     }
   }
 }
