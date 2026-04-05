@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { FormEventHandler } from 'react';
 import { Box, Button, Loader, Modal, Notification, Text } from 'tharaday';
+import ConfirmModal from '../../shared/components/ConfirmModal.tsx';
 import type { Product } from '../types.ts';
 import {
   createEmptyProductFormValues,
@@ -38,6 +39,7 @@ const ProductsList = ({ isCreateModalOpen, onCloseCreateModal }: ProductsListPro
   const [editingProductValues, setEditingProductValues] = useState<ProductFormValues>(
     createEmptyProductFormValues()
   );
+  const [pendingDelete, setPendingDelete] = useState<{ id: string; name: string } | null>(null);
 
   const updateNewProductField = (field: keyof ProductFormValues, value: string) => {
     setNewProductValues((current) => ({ ...current, [field]: value }));
@@ -58,7 +60,7 @@ const ProductsList = ({ isCreateModalOpen, onCloseCreateModal }: ProductsListPro
   };
 
   const startEditing = (product: Product) => {
-    setEditingProductId(String(product.id));
+    setEditingProductId(product.id);
     setEditingProductValues(toProductFormValues(product));
   };
 
@@ -67,21 +69,24 @@ const ProductsList = ({ isCreateModalOpen, onCloseCreateModal }: ProductsListPro
     setEditingProductValues(createEmptyProductFormValues());
   };
 
-  const handleSaveEdit = async (id: string | number) => {
+  const handleSaveEdit = async (id: string) => {
     const updated = await updateProduct(id, toProductPayload(editingProductValues));
     if (updated) {
       cancelEditing();
     }
   };
 
-  const handleDelete = async (id: string | number, name: string) => {
-    const confirmed = window.confirm(`Delete product "${name}"?`);
-    if (!confirmed) {
-      return;
-    }
+  const handleDelete = (id: string, name: string) => {
+    setPendingDelete({ id, name });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!pendingDelete) return;
+    const { id } = pendingDelete;
+    setPendingDelete(null);
 
     const deleted = await deleteProduct(id);
-    if (deleted && editingProductId === String(id)) {
+    if (deleted && editingProductId === id) {
       cancelEditing();
     }
   };
@@ -108,63 +113,72 @@ const ProductsList = ({ isCreateModalOpen, onCloseCreateModal }: ProductsListPro
   const createFormId = 'create-product-form';
 
   return (
-    <Box display="grid" gap={3}>
-      {actionError ? (
-        <Notification intent="danger" title="Product action failed">
-          {actionError}
-        </Notification>
-      ) : null}
+    <>
+      <ConfirmModal
+        isOpen={pendingDelete !== null}
+        message={`Delete product "${pendingDelete?.name}"?`}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setPendingDelete(null)}
+      />
 
-      {products.length === 0 ? (
-        <Notification intent="neutral" title="No products found">
-          Add your first product to get started.
-        </Notification>
-      ) : null}
+      <Box display="grid" gap={3}>
+        {actionError ? (
+          <Notification intent="danger" title="Product action failed">
+            {actionError}
+          </Notification>
+        ) : null}
 
-      <Box as="ul" display="grid" gap={3} margin={0} padding={0} style={{ listStyle: 'none' }}>
-        {products.map((product) => (
-          <ProductListItem
-            key={product.id}
-            product={product}
-            isEditing={editingProductId === String(product.id)}
-            editingValues={editingProductValues}
-            isUpdating={updatingProductId === product.id}
-            isDeleting={deletingProductId === product.id}
-            onStartEditing={startEditing}
-            onEditFieldChange={updateEditingField}
-            onCancelEditing={cancelEditing}
-            onSave={handleSaveEdit}
-            onDelete={handleDelete}
-          />
-        ))}
-      </Box>
+        {products.length === 0 ? (
+          <Notification intent="neutral" title="No products found">
+            Add your first product to get started.
+          </Notification>
+        ) : null}
 
-      <Modal
-        isOpen={isCreateModalOpen}
-        onClose={onCloseCreateModal}
-        title="Add product"
-        footer={
-          <Box display="flex" gap={2} justifyContent="flex-end" fullWidth>
-            <Button variant="outline" onClick={onCloseCreateModal}>
-              Cancel
-            </Button>
-            <Button type="submit" form={createFormId} isLoading={isCreating} intent="info">
-              Add product
-            </Button>
-          </Box>
-        }
-      >
-        <Box as="form" id={createFormId} onSubmit={handleSubmit} display="grid" gap={2}>
-          <ProductFormFields
-            prefix="new-product"
-            values={newProductValues}
-            onChange={updateNewProductField}
-            showError={Boolean(actionError)}
-            errorMessage={actionError ?? undefined}
-          />
+        <Box as="ul" display="grid" gap={3} margin={0} padding={0} style={{ listStyle: 'none' }}>
+          {products.map((product) => (
+            <ProductListItem
+              key={product.id}
+              product={product}
+              isEditing={editingProductId === product.id}
+              editingValues={editingProductValues}
+              isUpdating={updatingProductId === product.id}
+              isDeleting={deletingProductId === product.id}
+              onStartEditing={startEditing}
+              onEditFieldChange={updateEditingField}
+              onCancelEditing={cancelEditing}
+              onSave={handleSaveEdit}
+              onDelete={handleDelete}
+            />
+          ))}
         </Box>
-      </Modal>
-    </Box>
+
+        <Modal
+          isOpen={isCreateModalOpen}
+          onClose={onCloseCreateModal}
+          title="Add product"
+          footer={
+            <Box display="flex" gap={2} justifyContent="flex-end" fullWidth>
+              <Button variant="outline" onClick={onCloseCreateModal}>
+                Cancel
+              </Button>
+              <Button type="submit" form={createFormId} isLoading={isCreating} intent="info">
+                Add product
+              </Button>
+            </Box>
+          }
+        >
+          <Box as="form" id={createFormId} onSubmit={handleSubmit} display="grid" gap={2}>
+            <ProductFormFields
+              prefix="new-product"
+              values={newProductValues}
+              onChange={updateNewProductField}
+              showError={Boolean(actionError)}
+              errorMessage={actionError ?? undefined}
+            />
+          </Box>
+        </Modal>
+      </Box>
+    </>
   );
 };
 

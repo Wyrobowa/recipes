@@ -56,23 +56,21 @@ export const useRecipes = (): UseRecipesState => {
   const [actionError, setActionError] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
 
     const loadRecipes = async () => {
       try {
         setIsLoading(true);
         setError(null);
 
-        const loadedRecipes = await fetchRecipes();
-        if (!cancelled) {
-          setRecipes(loadedRecipes);
-        }
+        const loadedRecipes = await fetchRecipes(controller.signal);
+        setRecipes(loadedRecipes);
       } catch (err) {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setError(err instanceof Error ? err.message : 'Failed to load recipes');
         }
       } finally {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setIsLoading(false);
         }
       }
@@ -81,7 +79,7 @@ export const useRecipes = (): UseRecipesState => {
     loadRecipes();
 
     return () => {
-      cancelled = true;
+      controller.abort();
     };
   }, []);
 

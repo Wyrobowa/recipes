@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { FormEventHandler } from 'react';
 import { Box, Button, Loader, Modal, Notification, Text } from 'tharaday';
+import ConfirmModal from '../../shared/components/ConfirmModal.tsx';
 import RecipeFiltersPanel from './RecipeFiltersPanel.tsx';
 import RecipeFormFields from './RecipeFormFields.tsx';
 import RecipeListItem from './RecipeListItem.tsx';
@@ -48,6 +49,8 @@ const RecipesList = ({ isCreateModalOpen, onCloseCreateModal }: RecipesListProps
     setFatRange,
   } = useRecipeFilters(recipes);
 
+  const [pendingDelete, setPendingDelete] = useState<Recipe | null>(null);
+
   const {
     newRecipeValues,
     editingRecipeId,
@@ -87,19 +90,22 @@ const RecipesList = ({ isCreateModalOpen, onCloseCreateModal }: RecipesListProps
     }
   };
 
-  const handleDelete = async (recipe: Recipe) => {
-    const confirmed = window.confirm(`Delete recipe "${recipe.name}"?`);
-    if (!confirmed) {
-      return;
-    }
+  const handleDelete = (recipe: Recipe) => {
+    setPendingDelete(recipe);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!pendingDelete) return;
+    const recipe = pendingDelete;
+    setPendingDelete(null);
 
     const deleted = await deleteRecipe(recipe);
-    if (deleted && editingRecipeId === String(recipe.id)) {
+    if (deleted && editingRecipeId === recipe.id) {
       cancelEditing();
     }
   };
 
-  if (isLoading || isOptionsLoading) {
+  if (isLoading) {
     return (
       <Box display="flex" alignItems="center" gap={2} paddingY={2}>
         <Loader size="sm" intent="info" />
@@ -119,96 +125,108 @@ const RecipesList = ({ isCreateModalOpen, onCloseCreateModal }: RecipesListProps
   }
 
   return (
-    <Box display="grid" gap={3}>
-      {actionError ? (
-        <Notification intent="danger" title="Recipe action failed">
-          {actionError}
-        </Notification>
-      ) : null}
+    <>
+      <ConfirmModal
+        isOpen={pendingDelete !== null}
+        message={`Delete recipe "${pendingDelete?.name}"?`}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setPendingDelete(null)}
+      />
 
-      {recipes.length === 0 ? (
-        <Notification intent="neutral" title="No recipes found">
-          Add your first recipe to get started.
-        </Notification>
-      ) : null}
+      <Box display="grid" gap={3}>
+        {actionError ? (
+          <Notification intent="danger" title="Recipe action failed">
+            {actionError}
+          </Notification>
+        ) : null}
 
-      {recipes.length > 0 ? (
-        <RecipeFiltersPanel
-          categories={categories}
-          filters={filters}
-          nutritionBounds={nutritionBounds}
-          sliderRanges={sliderRanges}
-          hasActiveFilters={hasActiveFilters}
-          onQueryChange={setQuery}
-          onCategoryFilterChange={setCategoryFilter}
-          onClearFilters={clearFilters}
-          onKcalRangeChange={setKcalRange}
-          onProteinRangeChange={setProteinRange}
-          onCarbsRangeChange={setCarbsRange}
-          onFatRangeChange={setFatRange}
-        />
-      ) : null}
+        {recipes.length === 0 ? (
+          <Notification intent="neutral" title="No recipes found">
+            Add your first recipe to get started.
+          </Notification>
+        ) : null}
 
-      {recipes.length > 0 && filteredRecipes.length === 0 ? (
-        <Notification intent="neutral" title="No recipes match the current filters">
-          Try changing or clearing your filters.
-        </Notification>
-      ) : null}
-
-      <Box as="ul" display="grid" gap={3} margin={0} padding={0} style={{ listStyle: 'none' }}>
-        {filteredRecipes.map((recipe) => (
-          <RecipeListItem
-            key={recipe.id}
-            recipe={recipe}
+        {recipes.length > 0 ? (
+          <RecipeFiltersPanel
             categories={categories}
-            products={products}
-            isEditing={editingRecipeId === String(recipe.id)}
-            editingValues={editingRecipeValues}
-            isUpdating={updatingRecipeId === recipe.id}
-            isDeleting={deletingRecipeId === recipe.id}
-            onStartEditing={startEditing}
-            onChangeField={updateEditingField}
-            onChangeIngredient={updateEditingIngredient}
-            onAddIngredient={() => addEditingIngredient(products)}
-            onRemoveIngredient={removeEditingIngredient}
-            onCancelEditing={cancelEditing}
-            onSave={handleSave}
-            onDelete={handleDelete}
+            filters={filters}
+            isOptionsLoading={isOptionsLoading}
+            nutritionBounds={nutritionBounds}
+            sliderRanges={sliderRanges}
+            hasActiveFilters={hasActiveFilters}
+            onQueryChange={setQuery}
+            onCategoryFilterChange={setCategoryFilter}
+            onClearFilters={clearFilters}
+            onKcalRangeChange={setKcalRange}
+            onProteinRangeChange={setProteinRange}
+            onCarbsRangeChange={setCarbsRange}
+            onFatRangeChange={setFatRange}
           />
-        ))}
-      </Box>
+        ) : null}
 
-      <Modal
-        isOpen={isCreateModalOpen}
-        onClose={onCloseCreateModal}
-        title="Add recipe"
-        size="lg"
-        footer={
-          <Box display="flex" gap={2} justifyContent="flex-end" fullWidth>
-            <Button variant="outline" onClick={onCloseCreateModal}>
-              Cancel
-            </Button>
-            <Button type="submit" form={createFormId} isLoading={isCreating} intent="info">
-              Add recipe
-            </Button>
-          </Box>
-        }
-      >
-        <Box as="form" id={createFormId} onSubmit={handleCreate} display="grid" gap={2}>
-          <RecipeFormFields
-            prefix="new-recipe"
-            values={newRecipeValues}
-            categories={categories}
-            products={products}
-            titleError={actionError ?? undefined}
-            onFieldChange={updateNewRecipeField}
-            onIngredientChange={updateNewIngredient}
-            onAddIngredient={() => addNewIngredient(products)}
-            onRemoveIngredient={removeNewIngredient}
-          />
+        {recipes.length > 0 && filteredRecipes.length === 0 ? (
+          <Notification intent="neutral" title="No recipes match the current filters">
+            Try changing or clearing your filters.
+          </Notification>
+        ) : null}
+
+        <Box as="ul" display="grid" gap={3} margin={0} padding={0} style={{ listStyle: 'none' }}>
+          {filteredRecipes.map((recipe) => (
+            <RecipeListItem
+              key={recipe.id}
+              recipe={recipe}
+              categories={categories}
+              products={products}
+              isEditing={editingRecipeId === recipe.id}
+              editingValues={editingRecipeValues}
+              isUpdating={updatingRecipeId === recipe.id}
+              isDeleting={deletingRecipeId === recipe.id}
+              onStartEditing={startEditing}
+              onChangeField={updateEditingField}
+              onChangeIngredient={updateEditingIngredient}
+              isOptionsLoading={isOptionsLoading}
+              onAddIngredient={() => addEditingIngredient(products)}
+              onRemoveIngredient={removeEditingIngredient}
+              onCancelEditing={cancelEditing}
+              onSave={handleSave}
+              onDelete={handleDelete}
+            />
+          ))}
         </Box>
-      </Modal>
-    </Box>
+
+        <Modal
+          isOpen={isCreateModalOpen}
+          onClose={onCloseCreateModal}
+          title="Add recipe"
+          size="lg"
+          footer={
+            <Box display="flex" gap={2} justifyContent="flex-end" fullWidth>
+              <Button variant="outline" onClick={onCloseCreateModal}>
+                Cancel
+              </Button>
+              <Button type="submit" form={createFormId} isLoading={isCreating} intent="info">
+                Add recipe
+              </Button>
+            </Box>
+          }
+        >
+          <Box as="form" id={createFormId} onSubmit={handleCreate} display="grid" gap={2}>
+            <RecipeFormFields
+              prefix="new-recipe"
+              values={newRecipeValues}
+              categories={categories}
+              products={products}
+              titleError={actionError ?? undefined}
+              isOptionsLoading={isOptionsLoading}
+              onFieldChange={updateNewRecipeField}
+              onIngredientChange={updateNewIngredient}
+              onAddIngredient={() => addNewIngredient(products)}
+              onRemoveIngredient={removeNewIngredient}
+            />
+          </Box>
+        </Modal>
+      </Box>
+    </>
   );
 };
 

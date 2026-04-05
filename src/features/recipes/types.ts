@@ -34,13 +34,13 @@ export type ApiRecipe = {
 };
 
 export type RecipeCategory = {
-  id: number | string;
+  id: string;
   name: string;
   slug: string;
 };
 
 export type RecipeProduct = {
-  id: number | string;
+  id: string;
   name: string;
   unit: string;
   quantity: number;
@@ -51,7 +51,7 @@ export type RecipeProduct = {
 };
 
 export type Recipe = {
-  id: number | string;
+  id: string;
   slug: string;
   name: string;
   description: string;

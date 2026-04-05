@@ -7,18 +7,24 @@ const toNumber = (value: number | string | undefined): number => {
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
-const normalizeProduct = (product: ApiProduct): Product => ({
-  id: product.id ?? product._id ?? crypto.randomUUID(),
-  name: product.name ?? product.title ?? 'Untitled product',
-  unit: product.unit ?? '',
-  kcal: toNumber(product.kcal),
-  protein_g: toNumber(product.protein_g),
-  carbs_g: toNumber(product.carbs_g),
-  fat_g: toNumber(product.fat_g),
-});
+const normalizeProduct = (product: ApiProduct): Product => {
+  const rawId = product.id ?? product._id;
+  if (rawId == null) {
+    console.warn('Product missing id, using generated UUID', product);
+  }
+  return {
+    id: rawId != null ? String(rawId) : crypto.randomUUID(),
+    name: product.name ?? product.title ?? 'Untitled product',
+    unit: product.unit ?? '',
+    kcal: toNumber(product.kcal),
+    protein_g: toNumber(product.protein_g),
+    carbs_g: toNumber(product.carbs_g),
+    fat_g: toNumber(product.fat_g),
+  };
+};
 
-export const fetchProducts = async (): Promise<Product[]> => {
-  const response = await fetch(`${API_BASE_URL}/products`);
+export const fetchProducts = async (signal?: AbortSignal): Promise<Product[]> => {
+  const response = await fetch(`${API_BASE_URL}/products`, { signal });
   await throwIfResponseNotOk(response, 'fetch products');
 
   const payload: unknown = await response.json();

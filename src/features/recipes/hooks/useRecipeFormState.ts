@@ -12,8 +12,14 @@ type UseRecipeFormState = {
   newRecipeValues: RecipeFormValues;
   editingRecipeId: string | null;
   editingRecipeValues: RecipeFormValues;
-  updateNewRecipeField: (field: Exclude<keyof RecipeFormValues, 'ingredients'>, value: string) => void;
-  updateEditingField: (field: Exclude<keyof RecipeFormValues, 'ingredients'>, value: string) => void;
+  updateNewRecipeField: (
+    field: Exclude<keyof RecipeFormValues, 'ingredients'>,
+    value: string
+  ) => void;
+  updateEditingField: (
+    field: Exclude<keyof RecipeFormValues, 'ingredients'>,
+    value: string
+  ) => void;
   updateNewIngredient: (index: number, field: 'productId' | 'quantity', value: string) => void;
   updateEditingIngredient: (index: number, field: 'productId' | 'quantity', value: string) => void;
   addNewIngredient: (products: Product[]) => void;
@@ -137,7 +143,7 @@ export const useRecipeFormState = (): UseRecipeFormState => {
   };
 
   const startEditing = (recipe: Recipe) => {
-    setEditingRecipeId(String(recipe.id));
+    setEditingRecipeId(recipe.id);
     setEditingRecipeValues(toRecipeFormValues(recipe));
   };
 

@@ -14,6 +14,7 @@ type RecipeListItemProps = {
   editingValues: RecipeFormValues;
   isUpdating: boolean;
   isDeleting: boolean;
+  isOptionsLoading: boolean;
   onStartEditing: (recipe: Recipe) => void;
   onChangeField: (field: Exclude<keyof RecipeFormValues, 'ingredients'>, value: string) => void;
   onChangeIngredient: (index: number, field: 'productId' | 'quantity', value: string) => void;
@@ -32,6 +33,7 @@ const RecipeListItem = ({
   editingValues,
   isUpdating,
   isDeleting,
+  isOptionsLoading,
   onStartEditing,
   onChangeField,
   onChangeIngredient,
@@ -51,6 +53,7 @@ const RecipeListItem = ({
               values={editingValues}
               categories={categories}
               products={products}
+              isOptionsLoading={isOptionsLoading}
               onFieldChange={onChangeField}
               onIngredientChange={onChangeIngredient}
               onAddIngredient={onAddIngredient}

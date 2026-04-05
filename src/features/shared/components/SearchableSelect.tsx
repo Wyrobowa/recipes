@@ -1,7 +1,9 @@
+import type { ChangeEvent } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { Box, Button, Input, Text } from 'tharaday';
 import { useClickOutside } from '../hooks/useClickOutside.ts';
 import type { SearchableSelectProps } from '../types/select.ts';
+import styles from './SearchableSelect.module.css';
 
 const toStringValue = (value: string | number): string => String(value);
 
@@ -50,8 +52,8 @@ const SearchableSelect = ({
   };
 
   return (
-    <div ref={rootRef}>
-      <Box display="grid" gap={1} style={{ position: 'relative' }}>
+    <div ref={rootRef} className={styles.root}>
+      <Box display="grid" gap={1}>
         <Input
           id={id}
           label={label}
@@ -63,7 +65,7 @@ const SearchableSelect = ({
               setQuery('');
             }
           }}
-          onChange={(event) => {
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
             setQuery(event.target.value);
             setIsOpen(true);
           }}
@@ -80,23 +82,7 @@ const SearchableSelect = ({
         />
 
         {isOpen ? (
-          <Box
-            style={{
-              position: 'absolute',
-              top: '100%',
-              left: 0,
-              right: 0,
-              zIndex: 20,
-              marginTop: 4,
-              maxHeight: 220,
-              overflowY: 'auto',
-              background: '#fff',
-              border: '1px solid #d1d5db',
-              borderRadius: 8,
-              padding: 6,
-              boxShadow: '0 8px 24px rgba(15, 23, 42, 0.12)',
-            }}
-          >
+          <div className={styles.dropdown}>
             {filteredOptions.length === 0 ? (
               <Text as="p" variant="body-sm" color="subtle" margin={0}>
                 {noOptionsText}
@@ -115,7 +101,7 @@ const SearchableSelect = ({
                       intent={isActive ? 'info' : 'neutral'}
                       disabled={option.disabled}
                       onClick={() => handleSelect(option.value)}
-                      style={{ justifyContent: 'flex-start' }}
+                      className={styles.option}
                     >
                       {option.label}
                     </Button>
@@ -123,7 +109,7 @@ const SearchableSelect = ({
                 })}
               </Box>
             )}
-          </Box>
+          </div>
         ) : null}
       </Box>
     </div>

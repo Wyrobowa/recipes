@@ -19,8 +19,8 @@ export const createEmptyProductFormValues = (): ProductFormValues => ({
 });
 
 export const toProductPayload = (values: ProductFormValues): ProductPayload => ({
-  name: values.name,
-  unit: values.unit,
+  name: values.name.trim(),
+  unit: values.unit.trim(),
   kcal: Number(values.kcal),
   protein_g: Number(values.protein_g),
   carbs_g: Number(values.carbs_g),

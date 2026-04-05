@@ -28,23 +28,21 @@ export const useCategories = (): UseCategoriesState => {
   const [actionError, setActionError] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
 
     const loadCategories = async () => {
       try {
         setIsLoading(true);
         setError(null);
 
-        const loadedCategories = await fetchCategories();
-        if (!cancelled) {
-          setCategories(loadedCategories);
-        }
+        const loadedCategories = await fetchCategories(controller.signal);
+        setCategories(loadedCategories);
       } catch (err) {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setError(err instanceof Error ? err.message : 'Failed to load categories');
         }
       } finally {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setIsLoading(false);
         }
       }
@@ -53,7 +51,7 @@ export const useCategories = (): UseCategoriesState => {
     loadCategories();
 
     return () => {
-      cancelled = true;
+      controller.abort();
     };
   }, []);
 

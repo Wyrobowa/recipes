@@ -11,7 +11,7 @@ export type ApiProduct = {
 };
 
 export type Product = {
-  id: number | string;
+  id: string;
   name: string;
   unit: string;
   kcal: number;

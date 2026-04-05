@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import type { FormEventHandler } from 'react';
+import type { ChangeEvent, FormEventHandler } from 'react';
 import { Box, Button, Card, CardContent, Input, Loader, Modal, Notification, Text } from 'tharaday';
+import ConfirmModal from './ConfirmModal.tsx';
 
 export type NamedEntity = {
-  id: string | number;
+  id: string;
   name: string;
   slug?: string;
 };
@@ -48,8 +49,11 @@ const NamedEntityCrudList = <TItem extends NamedEntity>({
   onCloseCreateModal,
 }: NamedEntityCrudListProps<TItem>) => {
   const [newItemName, setNewItemName] = useState('');
-  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [editingItemId, setEditingItemId] = useState<TItem['id'] | null>(null);
   const [editingItemName, setEditingItemName] = useState('');
+  const [pendingDelete, setPendingDelete] = useState<{ id: TItem['id']; name: string } | null>(
+    null
+  );
 
   const handleSubmit: FormEventHandler<HTMLElement> = async (event) => {
     event.preventDefault();
@@ -62,7 +66,7 @@ const NamedEntityCrudList = <TItem extends NamedEntity>({
   };
 
   const startEditing = (id: TItem['id'], currentName: string) => {
-    setEditingItemId(String(id));
+    setEditingItemId(id);
     setEditingItemName(currentName);
   };
 
@@ -78,14 +82,17 @@ const NamedEntityCrudList = <TItem extends NamedEntity>({
     }
   };
 
-  const handleDelete = async (id: TItem['id'], name: string) => {
-    const confirmed = window.confirm(`Delete ${singularLabel} "${name}"?`);
-    if (!confirmed) {
-      return;
-    }
+  const handleDelete = (id: TItem['id'], name: string) => {
+    setPendingDelete({ id, name });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!pendingDelete) return;
+    const { id } = pendingDelete;
+    setPendingDelete(null);
 
     const deleted = await onDelete(id);
-    if (deleted && editingItemId === String(id)) {
+    if (deleted && editingItemId === id) {
       cancelEditing();
     }
   };
@@ -131,13 +138,13 @@ const NamedEntityCrudList = <TItem extends NamedEntity>({
           <Box as="li" key={item.id}>
             <Card bordered>
               <CardContent>
-                {editingItemId === String(item.id) ? (
+                {editingItemId === item.id ? (
                   <Box display="grid" gap={2}>
                     <Input
                       id={`edit-${singularLabel}-${item.id}`}
                       label={`${singularTitle} name`}
                       value={editingItemName}
-                      onChange={(event) => setEditingItemName(event.target.value)}
+                      onChange={(event: ChangeEvent<HTMLInputElement>) => setEditingItemName(event.target.value)}
                       fullWidth
                     />
                     <Box display="flex" justifyContent="flex-end" gap={2}>
@@ -184,6 +191,13 @@ const NamedEntityCrudList = <TItem extends NamedEntity>({
         ))}
       </Box>
 
+      <ConfirmModal
+        isOpen={pendingDelete !== null}
+        message={`Delete ${singularLabel} "${pendingDelete?.name}"?`}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setPendingDelete(null)}
+      />
+
       <Modal
         isOpen={isCreateModalOpen}
         onClose={onCloseCreateModal}
@@ -205,7 +219,7 @@ const NamedEntityCrudList = <TItem extends NamedEntity>({
             label={`${singularTitle} name`}
             placeholder={inputPlaceholder}
             value={newItemName}
-            onChange={(event) => setNewItemName(event.target.value)}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => setNewItemName(event.target.value)}
             error={Boolean(actionError)}
             helperText={actionError ?? undefined}
             fullWidth

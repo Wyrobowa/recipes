@@ -1,3 +1,4 @@
+import type { ChangeEvent } from 'react';
 import { Box, Input } from 'tharaday';
 import type { ProductFormValues } from '../helpers/productFormHelpers.ts';
 
@@ -22,7 +23,7 @@ const ProductFormFields = ({
       label="Product name"
       placeholder="e.g. Tomato"
       value={values.name}
-      onChange={(event) => onChange('name', event.target.value)}
+      onChange={(event: ChangeEvent<HTMLInputElement>) => onChange('name', event.target.value)}
       error={showError}
       helperText={showError ? errorMessage : undefined}
       fullWidth
@@ -32,7 +33,7 @@ const ProductFormFields = ({
       label="Unit"
       placeholder="e.g. g"
       value={values.unit}
-      onChange={(event) => onChange('unit', event.target.value)}
+      onChange={(event: ChangeEvent<HTMLInputElement>) => onChange('unit', event.target.value)}
       fullWidth
     />
     <Input
@@ -41,7 +42,7 @@ const ProductFormFields = ({
       label="Calories (kcal)"
       placeholder="0"
       value={values.kcal}
-      onChange={(event) => onChange('kcal', event.target.value)}
+      onChange={(event: ChangeEvent<HTMLInputElement>) => onChange('kcal', event.target.value)}
       fullWidth
     />
     <Input
@@ -50,7 +51,7 @@ const ProductFormFields = ({
       label="Protein (g)"
       placeholder="0"
       value={values.protein_g}
-      onChange={(event) => onChange('protein_g', event.target.value)}
+      onChange={(event: ChangeEvent<HTMLInputElement>) => onChange('protein_g', event.target.value)}
       fullWidth
     />
     <Input
@@ -59,7 +60,7 @@ const ProductFormFields = ({
       label="Carbohydrates (g)"
       placeholder="0"
       value={values.carbs_g}
-      onChange={(event) => onChange('carbs_g', event.target.value)}
+      onChange={(event: ChangeEvent<HTMLInputElement>) => onChange('carbs_g', event.target.value)}
       fullWidth
     />
     <Input
@@ -68,7 +69,7 @@ const ProductFormFields = ({
       label="Fat (g)"
       placeholder="0"
       value={values.fat_g}
-      onChange={(event) => onChange('fat_g', event.target.value)}
+      onChange={(event: ChangeEvent<HTMLInputElement>) => onChange('fat_g', event.target.value)}
       fullWidth
     />
   </Box>

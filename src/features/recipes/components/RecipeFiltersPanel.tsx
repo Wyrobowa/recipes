@@ -1,3 +1,4 @@
+import type { ChangeEvent } from 'react';
 import { useCallback, useState } from 'react';
 import { Box, Button, Input } from 'tharaday';
 import type { SliderValue } from 'tharaday';
@@ -21,6 +22,7 @@ type RecipeFiltersPanelProps = {
   nutritionBounds: NutritionBounds;
   sliderRanges: SliderRanges;
   hasActiveFilters: boolean;
+  isOptionsLoading?: boolean;
   onQueryChange: (value: string) => void;
   onCategoryFilterChange: (value: string) => void;
   onClearFilters: () => void;
@@ -32,6 +34,7 @@ const RecipeFiltersPanel = ({
   nutritionBounds,
   sliderRanges,
   hasActiveFilters,
+  isOptionsLoading = false,
   onQueryChange,
   onCategoryFilterChange,
   onClearFilters,
@@ -76,7 +79,7 @@ const RecipeFiltersPanel = ({
                 label="Search recipes"
                 placeholder="Search by title, description, category, or ingredient"
                 value={filters.query}
-                onChange={(event) => onQueryChange(event.target.value)}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => onQueryChange(event.target.value)}
                 fullWidth
               />
               <SearchableSelect
@@ -87,10 +90,11 @@ const RecipeFiltersPanel = ({
                 options={[
                   { value: '', label: 'All categories' },
                   ...categories.map((category) => ({
-                    value: String(category.id),
+                    value: category.id,
                     label: category.name,
                   })),
                 ]}
+                disabled={isOptionsLoading}
               />
             </Box>
 

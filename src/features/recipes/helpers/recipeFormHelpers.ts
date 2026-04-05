@@ -29,11 +29,11 @@ export const toRecipeFormValues = (recipe: Recipe): RecipeFormValues => ({
   description: recipe.description,
   recipe: recipe.recipe,
   photo: recipe.photo,
-  categoryId: recipe.category ? String(recipe.category.id) : '',
+  categoryId: recipe.category ? recipe.category.id : '',
   ingredients:
     recipe.products.length > 0
       ? recipe.products.map((product) => ({
-          productId: String(product.id),
+          productId: product.id,
           quantity: String(product.quantity),
         }))
       : [{ productId: '', quantity: '1' }],
@@ -62,9 +62,9 @@ export const toRecipePayload = (values: RecipeFormValues): RecipePayload => {
   const categoryNumber = Number(values.categoryId);
 
   return {
-    title: values.title,
+    title: values.title.trim(),
     description: values.description.trim() || undefined,
-    recipe: values.recipe,
+    recipe: values.recipe.trim(),
     photo: values.photo.trim() || undefined,
     category: Number.isInteger(categoryNumber) && categoryNumber > 0 ? categoryNumber : undefined,
     products,
@@ -76,5 +76,5 @@ export const defaultIngredientProductId = (products: Product[]): string => {
     return '';
   }
 
-  return String(products[0].id);
+  return products[0].id;
 };

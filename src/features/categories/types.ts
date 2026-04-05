@@ -8,7 +8,7 @@ export type ApiCategory = {
 };
 
 export type Category = {
-  id: number | string;
+  id: string;
   name: string;
   slug: string;
 };

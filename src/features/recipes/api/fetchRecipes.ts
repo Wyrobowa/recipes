@@ -21,8 +21,12 @@ const normalizeCategory = (
     return null;
   }
 
+  const rawId = category.id ?? category._id;
+  if (rawId == null) {
+    console.warn('Recipe category missing id, using generated UUID', category);
+  }
   return {
-    id: category.id ?? category._id ?? crypto.randomUUID(),
+    id: rawId != null ? String(rawId) : crypto.randomUUID(),
     name: category.name ?? 'Uncategorized',
     slug: category.slug ?? '',
   };
@@ -33,8 +37,12 @@ const normalizeRecipeProduct = (item: ApiRecipeProduct): RecipeProduct | null =>
     return null;
   }
 
+  const rawId = item.product.id ?? item.product._id;
+  if (rawId == null) {
+    console.warn('Recipe product missing id, using generated UUID', item.product);
+  }
   return {
-    id: item.product.id ?? item.product._id ?? crypto.randomUUID(),
+    id: rawId != null ? String(rawId) : crypto.randomUUID(),
     name: item.product.name ?? 'Unnamed product',
     unit: item.product.unit ?? '',
     quantity: toNumber(item.quantity),
@@ -45,21 +53,27 @@ const normalizeRecipeProduct = (item: ApiRecipeProduct): RecipeProduct | null =>
   };
 };
 
-const normalizeRecipe = (recipe: ApiRecipe): Recipe => ({
-  id: recipe.id ?? recipe._id ?? crypto.randomUUID(),
-  slug: recipe.slug ?? '',
-  name: recipe.title ?? recipe.name ?? 'Untitled recipe',
-  description: recipe.description ?? recipe.instructions ?? recipe.recipe ?? '',
-  recipe: recipe.recipe ?? recipe.instructions ?? '',
-  photo: 'photo' in recipe && typeof recipe.photo === 'string' ? recipe.photo : '',
-  category: normalizeCategory(recipe.category),
-  products: (recipe.products ?? [])
-    .map((item) => normalizeRecipeProduct(item))
-    .filter((item): item is RecipeProduct => item !== null),
-});
+const normalizeRecipe = (recipe: ApiRecipe): Recipe => {
+  const rawId = recipe.id ?? recipe._id;
+  if (rawId == null) {
+    console.warn('Recipe missing id, using generated UUID', recipe);
+  }
+  return {
+    id: rawId != null ? String(rawId) : crypto.randomUUID(),
+    slug: recipe.slug ?? '',
+    name: recipe.title ?? recipe.name ?? 'Untitled recipe',
+    description: recipe.description ?? recipe.instructions ?? recipe.recipe ?? '',
+    recipe: recipe.recipe ?? recipe.instructions ?? '',
+    photo: 'photo' in recipe && typeof recipe.photo === 'string' ? recipe.photo : '',
+    category: normalizeCategory(recipe.category),
+    products: (recipe.products ?? [])
+      .map((item) => normalizeRecipeProduct(item))
+      .filter((item): item is RecipeProduct => item !== null),
+  };
+};
 
-export const fetchRecipes = async (): Promise<Recipe[]> => {
-  const response = await fetch(`${API_BASE_URL}/recipes`);
+export const fetchRecipes = async (signal?: AbortSignal): Promise<Recipe[]> => {
+  const response = await fetch(`${API_BASE_URL}/recipes`, { signal });
   await throwIfResponseNotOk(response, 'fetch recipes');
 
   const payload: unknown = await response.json();

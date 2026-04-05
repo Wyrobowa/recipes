@@ -1,3 +1,4 @@
+import type { ChangeEvent } from 'react';
 import { Box, Button, Divider, Input, Text } from 'tharaday';
 import type { Category } from '../../categories/types.ts';
 import type { Product } from '../../products/types.ts';
@@ -10,6 +11,7 @@ type RecipeFormFieldsProps = {
   categories: Category[];
   products: Product[];
   titleError?: string;
+  isOptionsLoading?: boolean;
   onFieldChange: (field: Exclude<keyof RecipeFormValues, 'ingredients'>, value: string) => void;
   onIngredientChange: (index: number, field: 'productId' | 'quantity', value: string) => void;
   onAddIngredient: () => void;
@@ -22,6 +24,7 @@ const RecipeFormFields = ({
   categories,
   products,
   titleError,
+  isOptionsLoading = false,
   onFieldChange,
   onIngredientChange,
   onAddIngredient,
@@ -33,7 +36,7 @@ const RecipeFormFields = ({
       label="Title"
       placeholder="e.g. Omelette"
       value={values.title}
-      onChange={(event) => onFieldChange('title', event.target.value)}
+      onChange={(event: ChangeEvent<HTMLInputElement>) => onFieldChange('title', event.target.value)}
       error={Boolean(titleError)}
       helperText={titleError}
       fullWidth
@@ -43,7 +46,7 @@ const RecipeFormFields = ({
       label="Description"
       placeholder="Short summary"
       value={values.description}
-      onChange={(event) => onFieldChange('description', event.target.value)}
+      onChange={(event: ChangeEvent<HTMLInputElement>) => onFieldChange('description', event.target.value)}
       fullWidth
     />
     <Input
@@ -51,7 +54,7 @@ const RecipeFormFields = ({
       label="Instructions"
       placeholder="Recipe instructions"
       value={values.recipe}
-      onChange={(event) => onFieldChange('recipe', event.target.value)}
+      onChange={(event: ChangeEvent<HTMLInputElement>) => onFieldChange('recipe', event.target.value)}
       fullWidth
     />
     <Input
@@ -59,7 +62,7 @@ const RecipeFormFields = ({
       label="Photo URL"
       placeholder="https://..."
       value={values.photo}
-      onChange={(event) => onFieldChange('photo', event.target.value)}
+      onChange={(event: ChangeEvent<HTMLInputElement>) => onFieldChange('photo', event.target.value)}
       fullWidth
     />
 
@@ -71,10 +74,11 @@ const RecipeFormFields = ({
       options={[
         { value: '', label: 'No category' },
         ...categories.map((category) => ({
-          value: String(category.id),
+          value: category.id,
           label: category.name,
         })),
       ]}
+      disabled={isOptionsLoading}
     />
 
     <Divider spacing={40} />
@@ -92,17 +96,18 @@ const RecipeFormFields = ({
           options={[
             { value: '', label: 'Select product' },
             ...products.map((product) => ({
-              value: String(product.id),
+              value: product.id,
               label: product.name,
             })),
           ]}
+          disabled={isOptionsLoading}
         />
         <Input
           id={`${prefix}-ingredient-${index}-quantity`}
           type="number"
           label="Quantity"
           value={ingredient.quantity}
-          onChange={(event) => onIngredientChange(index, 'quantity', event.target.value)}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => onIngredientChange(index, 'quantity', event.target.value)}
           fullWidth
         />
         <Box display="flex" justifyContent="flex-end">

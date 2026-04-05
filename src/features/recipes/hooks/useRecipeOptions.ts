@@ -18,7 +18,7 @@ export const useRecipeOptions = (): UseRecipeOptionsState => {
   const [optionsError, setOptionsError] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
 
     const loadOptions = async () => {
       try {
@@ -26,22 +26,20 @@ export const useRecipeOptions = (): UseRecipeOptionsState => {
         setOptionsError(null);
 
         const [loadedCategories, loadedProducts] = await Promise.all([
-          fetchCategories(),
-          fetchProducts(),
+          fetchCategories(controller.signal),
+          fetchProducts(controller.signal),
         ]);
 
-        if (!cancelled) {
-          setCategories(loadedCategories);
-          setProducts(loadedProducts);
-        }
+        setCategories(loadedCategories);
+        setProducts(loadedProducts);
       } catch (err) {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setOptionsError(
             err instanceof Error ? err.message : 'Failed to load categories or products'
           );
         }
       } finally {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setIsOptionsLoading(false);
         }
       }
@@ -50,7 +48,7 @@ export const useRecipeOptions = (): UseRecipeOptionsState => {
     loadOptions();
 
     return () => {
-      cancelled = true;
+      controller.abort();
     };
   }, []);
 

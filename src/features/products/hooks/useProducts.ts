@@ -56,23 +56,21 @@ export const useProducts = (): UseProductsState => {
   const [actionError, setActionError] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
 
     const loadProducts = async () => {
       try {
         setIsLoading(true);
         setError(null);
 
-        const loadedProducts = await fetchProducts();
-        if (!cancelled) {
-          setProducts(loadedProducts);
-        }
+        const loadedProducts = await fetchProducts(controller.signal);
+        setProducts(loadedProducts);
       } catch (err) {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setError(err instanceof Error ? err.message : 'Failed to load products');
         }
       } finally {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setIsLoading(false);
         }
       }
@@ -81,7 +79,7 @@ export const useProducts = (): UseProductsState => {
     loadProducts();
 
     return () => {
-      cancelled = true;
+      controller.abort();
     };
   }, []);
 
