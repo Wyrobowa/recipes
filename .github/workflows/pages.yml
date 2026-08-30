@@ -39,6 +39,13 @@ jobs:
             echo "base_path=/$REPO_NAME/" >> $GITHUB_OUTPUT
           fi
 
+      - name: Check required env vars
+        run: |
+          if [[ -z "${{ vars.VITE_API_BASE_URL }}" ]]; then
+            echo "Missing GitHub Actions variable: VITE_API_BASE_URL"
+            exit 1
+          fi
+
       - name: Build static site
         env:
           VITE_BASE_PATH: ${{ steps.vars.outputs.base_path }}
